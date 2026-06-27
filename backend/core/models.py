@@ -72,49 +72,53 @@ class Timetable(models.Model):
         return f"{self.teacher} - {self.classroom} - {self.subject} ({self.get_day_display()} P{self.period})"
 
 
-class Substitution(models.Model):
-    date = models.DateField()
+class Leave(models.Model):
 
-    classroom = models.ForeignKey(
-        Classroom,
-        on_delete=models.CASCADE,
-    )
-
-    subject = models.ForeignKey(
-        Subject,
-        on_delete=models.CASCADE,
-    )
-
-    day = models.IntegerField(
-        choices=Day.choices,
-    )
-
-    period = models.PositiveSmallIntegerField()
-
-    original_teacher = models.ForeignKey(
+    teacher=models.ForeignKey(
         Teacher,
-        on_delete=models.CASCADE,
-        related_name="given_substitutions",
+        on_delete=models.CASCADE
     )
 
-    substitute_teacher = models.ForeignKey(
+    date=models.DateField()
+
+    reason=models.CharField(
+        max_length=100,
+        blank=True
+    )
+
+    created_at=models.DateTimeField(
+        auto_now_add=True
+    )
+
+class SubstitutionTask(models.Model):
+
+    class Status(models.TextChoices):
+        PENDING="PENDING","Pending"
+        ASSIGNED="ASSIGNED","Assigned"
+
+    timetable=models.ForeignKey(
+        Timetable,
+        on_delete=models.CASCADE
+    )
+
+    leave=models.ForeignKey(
+        Leave,
+        on_delete=models.CASCADE
+    )
+
+    substitute_teacher=models.ForeignKey(
         Teacher,
-        on_delete=models.CASCADE,
-        related_name="received_substitutions",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    status=models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING
+    )
 
-    class Meta:
-        ordering = [
-            "-date",
-            "period",
-        ]
-
-    def __str__(self):
-        return (
-            f"{self.date} | "
-            f"{self.classroom} | "
-            f"P{self.period} | "
-            f"{self.original_teacher} → {self.substitute_teacher}"
-        )
+    created_at=models.DateTimeField(
+        auto_now_add=True
+    )
