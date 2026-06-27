@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import FreeTeacherView
+from .views import AssignSubstituteView, FreeTeacherView
 
 urlpatterns = [
 
@@ -8,6 +8,11 @@ urlpatterns = [
         "free-teachers/",
         FreeTeacherView.as_view(),
         name="free-teachers"
+    ),
+    path(
+        "substitute/",
+        AssignSubstituteView.as_view(),
+        name="substitute"
     ),
 
 ]
