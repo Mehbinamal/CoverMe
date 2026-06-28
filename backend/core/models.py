@@ -71,7 +71,6 @@ class Timetable(models.Model):
     def __str__(self):
         return f"{self.teacher} - {self.classroom} - {self.subject} ({self.get_day_display()} P{self.period})"
 
-
 class Leave(models.Model):
 
     teacher = models.ForeignKey(
@@ -87,15 +86,16 @@ class Leave(models.Model):
         blank=True
     )
 
+    is_processed = models.BooleanField(
+        default=False
+    )
+
     created_at = models.DateTimeField(
         auto_now_add=True
     )
 
     class Meta:
-        unique_together = (
-            "teacher",
-            "date",
-        )
+        unique_together = ("teacher", "date")
 
     def __str__(self):
         return f"{self.teacher.name} ({self.date})"

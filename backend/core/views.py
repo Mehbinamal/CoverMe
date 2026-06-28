@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime,date
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -9,7 +9,7 @@ from .serializers import (
     TeacherSerializer,
     LeaveSerializer,
 )
-from .services import LeaveService
+from .services import LeaveService,TaskService
 
 
 class TeacherListView(APIView):
@@ -57,4 +57,43 @@ class LeaveView(APIView):
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
+        )
+    
+class GenerateTaskView(APIView):
+
+    def post(self, request):
+
+        date_string = request.data.get("date")
+
+        if not date_string:
+            return Response(
+                {
+                    "error": "date is required"
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+
+            task_date = datetime.strptime(
+                date_string,
+                "%Y-%m-%d"
+            ).date()
+
+        except ValueError:
+
+            return Response(
+                {
+                    "error": "Invalid date format. Use YYYY-MM-DD."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        total = TaskService.generate_tasks(task_date)
+
+        return Response(
+            {
+                "message": "Tasks generated successfully.",
+                "tasks_created": total
+            }
         )

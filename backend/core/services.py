@@ -1,6 +1,10 @@
 from datetime import date
 
-from .models import Leave
+from .models import (
+    Leave,
+    Timetable,
+    SubstitutionTask,
+)
 
 
 class LeaveService:
@@ -11,3 +15,41 @@ class LeaveService:
         return Leave.objects.filter(
             date=date.today()
         )
+    
+class TaskService:
+
+    @staticmethod
+    def generate_tasks(for_date):
+
+        weekday = for_date.weekday() + 1
+
+        leaves = Leave.objects.filter(
+            date=for_date,
+            is_processed=False
+        )
+
+        created = 0
+
+        for leave in leaves:
+
+            periods = Timetable.objects.filter(
+                teacher=leave.teacher,
+                day=weekday
+            )
+
+            for period in periods:
+
+                SubstitutionTask.objects.get_or_create(
+                    timetable=period,
+                    leave=leave,
+                    defaults={
+                        "status": SubstitutionTask.Status.PENDING
+                    }
+                )
+
+                created += 1
+
+            leave.is_processed = True
+            leave.save()
+
+        return created

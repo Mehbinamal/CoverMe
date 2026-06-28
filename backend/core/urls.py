@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    GenerateTaskView,
     TeacherListView,
     LeaveView,
 )
@@ -16,5 +17,10 @@ urlpatterns = [
         "leaves/",
         LeaveView.as_view()
     ),
+
+    path(
+        "tasks/generate/",
+        GenerateTaskView.as_view()
+),
 
 ]
