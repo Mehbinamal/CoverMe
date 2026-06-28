@@ -10,7 +10,11 @@ from .serializers import (
     TeacherSerializer,
     LeaveSerializer,
 )
-from .services import DashboardService, LeaveService,TaskService
+from .services.availabilty_service import AvailabilityService
+from .services.dashboard_service import DashboardService
+from .services.leave_service import LeaveService
+from .services.task_service import TaskService
+
 
 
 class TeacherListView(APIView):
@@ -111,3 +115,14 @@ class PendingTaskView(APIView):
         )
 
         return Response(serializer.data)
+    
+class AvailableTeacherView(APIView):
+
+    def get(self, request, task_id):
+
+        preferred, others = AvailabilityService.available_teachers(task_id)
+
+        return Response({
+            "preferred": TeacherSerializer(preferred, many=True).data,
+            "others": TeacherSerializer(others, many=True).data,
+        })

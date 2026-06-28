@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    AvailableTeacherView,
     GenerateTaskView,
     PendingTaskView,
     TeacherListView,
@@ -28,6 +29,12 @@ urlpatterns = [
         "tasks/pending/",
         PendingTaskView.as_view(),
         name="pending-tasks",
+    ),
+    
+    path(
+        "tasks/<int:task_id>/available/",
+        AvailableTeacherView.as_view(),
+        name="available-teachers",
     ),
 
 ]

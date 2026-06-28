@@ -1,21 +1,8 @@
-from datetime import date
-
-from .models import (
-    Leave,
-    Timetable,
-    SubstitutionTask,
-)
-
-
-class LeaveService:
-
-    @staticmethod
-    def todays_leave():
-
-        return Leave.objects.filter(
-            date=date.today()
-        )
     
+
+from core.models import Leave, SubstitutionTask, Timetable
+
+
 class TaskService:
 
     @staticmethod
@@ -65,16 +52,3 @@ class TaskService:
             leave.save()
 
         return created
-    
-class DashboardService:
-
-    @staticmethod
-    def pending_tasks():
-
-        return SubstitutionTask.objects.filter(
-            status=SubstitutionTask.Status.PENDING
-        ).select_related(
-            "original_teacher",
-            "classroom",
-            "subject"
-        )
