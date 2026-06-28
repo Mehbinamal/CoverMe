@@ -6,6 +6,7 @@ from .views import (
     PendingTaskView,
     TeacherListView,
     LeaveView,
+    DashboardView
 )
 
 urlpatterns = [
@@ -35,6 +36,12 @@ urlpatterns = [
         "tasks/<int:task_id>/available/",
         AvailableTeacherView.as_view(),
         name="available-teachers",
+    ),
+
+    path(
+        "dashboard/",
+        DashboardView.as_view(),
+        name="dashboard",
     ),
 
 ]

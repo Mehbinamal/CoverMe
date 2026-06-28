@@ -4,40 +4,39 @@ from core.models import (
     Teacher,
     Leave,
     SubstitutionTask,
-    Timetable,
 )
+
+from .timetable_service import TimetableService
 
 
 class DashboardService:
 
     @staticmethod
-    def dashboard():
-
-        hm = Teacher.objects.filter(
-            is_hm=True
-        ).first()
+    def get_dashboard():
 
         today = date.today()
 
         weekday = today.weekday() + 1
 
-        hm_timetable = []
+        hm = Teacher.objects.filter(
+            is_hm=True
+        ).first()
+
+        timetable = []
 
         if hm:
 
-            hm_timetable = Timetable.objects.filter(
-                teacher=hm,
-                day=weekday
-            ).select_related(
-                "classroom",
-                "subject"
+            timetable = TimetableService.teacher_timetable(
+                hm.id,
+                weekday
             )
 
         return {
 
             "today": today,
 
-            "leave_count": Leave.objects.filter(
+            "leave_count":
+            Leave.objects.filter(
                 date=today
             ).count(),
 
@@ -46,6 +45,7 @@ class DashboardService:
                 status=SubstitutionTask.Status.PENDING
             ).count(),
 
-            "hm_timetable": hm_timetable,
+            "hm_timetable":
+            timetable,
 
         }

@@ -9,11 +9,13 @@ from .serializers import (
     TaskSerializer,
     TeacherSerializer,
     LeaveSerializer,
+    TimetableSerializer
 )
 from .services.availabilty_service import AvailabilityService
 from .services.dashboard_service import DashboardService
 from .services.leave_service import LeaveService
 from .services.task_service import TaskService
+from .services.dashboard_service import DashboardService
 
 
 
@@ -125,4 +127,29 @@ class AvailableTeacherView(APIView):
         return Response({
             "preferred": TeacherSerializer(preferred, many=True).data,
             "others": TeacherSerializer(others, many=True).data,
+        })
+    
+class DashboardView(APIView):
+
+    def get(self, request):
+
+        dashboard = DashboardService.get_dashboard()
+
+        return Response({
+
+            "today":
+            dashboard["today"],
+
+            "leave_count":
+            dashboard["leave_count"],
+
+            "pending_count":
+            dashboard["pending_count"],
+
+            "hm_timetable":
+            TimetableSerializer(
+                dashboard["hm_timetable"],
+                many=True
+            ).data
+
         })

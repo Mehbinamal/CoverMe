@@ -1,6 +1,11 @@
 from rest_framework import serializers
 
-from .models import Teacher, Leave, SubstitutionTask
+from .models import (
+    Teacher,
+    Leave,
+    Timetable,
+    SubstitutionTask,
+)
 
 
 class TeacherSerializer(serializers.ModelSerializer):
@@ -8,6 +13,29 @@ class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
         fields = ["id", "name"]
+
+
+class TimetableSerializer(serializers.ModelSerializer):
+
+    classroom = serializers.CharField(
+        source="classroom.name",
+        read_only=True
+    )
+
+    subject = serializers.CharField(
+        source="subject.name",
+        read_only=True
+    )
+
+    class Meta:
+        model = Timetable
+        fields = [
+            "id",
+            "day",
+            "period",
+            "classroom",
+            "subject",
+        ]
 
 
 class LeaveSerializer(serializers.ModelSerializer):
@@ -25,33 +53,18 @@ class LeaveSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
 
     teacher = serializers.CharField(
-        source="original_teacher.name",
-        read_only=True
+        source="original_teacher.name"
     )
 
     classroom = serializers.CharField(
-        source="classroom.name",
-        read_only=True
+        source="classroom.name"
     )
 
     subject = serializers.CharField(
-        source="subject.name",
-        read_only=True
-    )
-
-    substitute = serializers.CharField(
-        source="substitute_teacher.name",
-        default="",
-        read_only=True
-    )
-
-    day = serializers.CharField(
-        source="get_day_display",
-        read_only=True
+        source="subject.name"
     )
 
     class Meta:
-
         model = SubstitutionTask
 
         fields = [
@@ -59,8 +72,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "teacher",
             "classroom",
             "subject",
-            "period",
             "day",
+            "period",
             "status",
-            "substitute",
         ]
