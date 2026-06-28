@@ -42,11 +42,23 @@ class TaskService:
                 SubstitutionTask.objects.get_or_create(
                     timetable=period,
                     leave=leave,
+
                     defaults={
+
+                        "original_teacher": period.teacher,
+
+                        "classroom": period.classroom,
+
+                        "subject": period.subject,
+
+                        "day": period.day,
+
+                        "period": period.period,
+
                         "status": SubstitutionTask.Status.PENDING
+
                     }
                 )
-
                 created += 1
 
             leave.is_processed = True

@@ -11,7 +11,13 @@ class Day(models.IntegerChoices):
 
 class Teacher(models.Model):
     name = models.CharField(max_length=100)
-    department = models.CharField(max_length=100, blank=True)
+    classroom = models.ForeignKey(
+        "Classroom",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="teachers"
+    )
 
     def __str__(self):
         return self.name
@@ -100,13 +106,19 @@ class Leave(models.Model):
     def __str__(self):
         return f"{self.teacher.name} ({self.date})"
 
+from django.utils import timezone
+
 class SubstitutionTask(models.Model):
 
     class Status(models.TextChoices):
-
         PENDING = "PENDING", "Pending"
-
         ASSIGNED = "ASSIGNED", "Assigned"
+
+    leave = models.ForeignKey(
+        Leave,
+        on_delete=models.CASCADE,
+        related_name="tasks"
+    )
 
     timetable = models.ForeignKey(
         Timetable,
@@ -114,11 +126,28 @@ class SubstitutionTask(models.Model):
         related_name="tasks"
     )
 
-    leave = models.ForeignKey(
-        Leave,
+    original_teacher = models.ForeignKey(
+        Teacher,
         on_delete=models.CASCADE,
-        related_name="tasks"
+        related_name="original_tasks"
     )
+
+    classroom = models.ForeignKey(
+        Classroom,
+        on_delete=models.CASCADE,
+        default="SCM"
+    )
+
+    subject = models.ForeignKey(
+        Subject,
+        on_delete=models.CASCADE
+    )
+
+    day = models.IntegerField(
+        choices=Day.choices
+    )
+
+    period = models.PositiveSmallIntegerField()
 
     substitute_teacher = models.ForeignKey(
         Teacher,
@@ -143,11 +172,15 @@ class SubstitutionTask(models.Model):
         auto_now_add=True
     )
 
-    def __str__(self):
+    class Meta:
+        ordering = [
+            "day",
+            "period"
+        ]
 
+    def __str__(self):
         return (
-            f"{self.timetable.teacher.name}"
-            f" | "
-            f"{self.timetable.get_day_display()}"
-            f" P{self.timetable.period}"
+            f"{self.classroom.name} "
+            f"P{self.period} "
+            f"({self.get_status_display()})"
         )
