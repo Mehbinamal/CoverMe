@@ -65,3 +65,16 @@ class TaskService:
             leave.save()
 
         return created
+    
+class DashboardService:
+
+    @staticmethod
+    def pending_tasks():
+
+        return SubstitutionTask.objects.filter(
+            status=SubstitutionTask.Status.PENDING
+        ).select_related(
+            "original_teacher",
+            "classroom",
+            "subject"
+        )

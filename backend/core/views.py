@@ -6,10 +6,11 @@ from rest_framework.views import APIView
 
 from .models import Teacher
 from .serializers import (
+    TaskSerializer,
     TeacherSerializer,
     LeaveSerializer,
 )
-from .services import LeaveService,TaskService
+from .services import DashboardService, LeaveService,TaskService
 
 
 class TeacherListView(APIView):
@@ -97,3 +98,16 @@ class GenerateTaskView(APIView):
                 "tasks_created": total
             }
         )
+    
+class PendingTaskView(APIView):
+
+    def get(self, request):
+
+        tasks = DashboardService.pending_tasks()
+
+        serializer = TaskSerializer(
+            tasks,
+            many=True
+        )
+
+        return Response(serializer.data)
