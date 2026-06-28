@@ -1,67 +1,60 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from datetime import date
+
 from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from .serializers import TeacherSerializer, SubstitutionSerializer
-from .services import AvailabilityService, SubstitutionService
+from .models import Teacher
+from .serializers import (
+    TeacherSerializer,
+    LeaveSerializer,
+)
+from .services import LeaveService
 
 
-class FreeTeacherView(APIView):
+class TeacherListView(APIView):
 
     def get(self, request):
 
-        timetable_id = request.GET.get("timetable_id")
+        teachers = Teacher.objects.all()
 
-        preferred, others = (
-            AvailabilityService.get_available_teachers(
-                timetable_id
-            )
+        return Response(
+            TeacherSerializer(
+                teachers,
+                many=True
+            ).data
         )
 
-        return Response({
 
-            "preferred":
-                TeacherSerializer(
-                    preferred,
-                    many=True
-                ).data,
+class LeaveView(APIView):
 
-            "others":
-                TeacherSerializer(
-                    others,
-                    many=True
-                ).data
+    def get(self, request):
 
-        })
-    
-class AssignSubstituteView(APIView):
+        leaves = LeaveService.todays_leave()
+
+        return Response(
+            LeaveSerializer(
+                leaves,
+                many=True
+            ).data
+        )
 
     def post(self, request):
 
-        timetable_id = request.data.get(
-            "timetable_id"
+        serializer = LeaveSerializer(
+            data=request.data
         )
 
-        substitute_teacher = request.data.get(
-            "substitute_teacher_id"
-        )
+        if serializer.is_valid():
 
-        substitution = (
-            SubstitutionService.assign_substitute(
-                timetable_id,
-                substitute_teacher
+            serializer.save()
+
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
             )
-        )
 
         return Response(
-            {
-                "message":
-                "Substitute assigned successfully.",
-
-                "substitution_id":
-                substitution.id
-            },
-
-            status=status.HTTP_201_CREATED
-
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
         )

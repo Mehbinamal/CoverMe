@@ -6,7 +6,8 @@ from .models import (
     Classroom,
     Subject,
     Timetable,
-    Substitution,
+    Leave,
+    SubstitutionTask,
 )
 
 
@@ -14,4 +15,5 @@ admin.site.register(Teacher)
 admin.site.register(Classroom)
 admin.site.register(Subject)
 admin.site.register(Timetable)
-admin.site.register(Substitution)
+admin.site.register(Leave)
+admin.site.register(SubstitutionTask)

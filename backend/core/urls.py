@@ -1,18 +1,20 @@
 from django.urls import path
 
-from .views import AssignSubstituteView, FreeTeacherView
+from .views import (
+    TeacherListView,
+    LeaveView,
+)
 
 urlpatterns = [
 
     path(
-        "free-teachers/",
-        FreeTeacherView.as_view(),
-        name="free-teachers"
+        "teachers/",
+        TeacherListView.as_view()
     ),
+
     path(
-        "substitute/",
-        AssignSubstituteView.as_view(),
-        name="substitute"
+        "leaves/",
+        LeaveView.as_view()
     ),
 
 ]

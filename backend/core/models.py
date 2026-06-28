@@ -74,51 +74,80 @@ class Timetable(models.Model):
 
 class Leave(models.Model):
 
-    teacher=models.ForeignKey(
+    teacher = models.ForeignKey(
         Teacher,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="leaves"
     )
 
-    date=models.DateField()
+    date = models.DateField()
 
-    reason=models.CharField(
-        max_length=100,
+    reason = models.CharField(
+        max_length=200,
         blank=True
     )
 
-    created_at=models.DateTimeField(
+    created_at = models.DateTimeField(
         auto_now_add=True
     )
+
+    class Meta:
+        unique_together = (
+            "teacher",
+            "date",
+        )
+
+    def __str__(self):
+        return f"{self.teacher.name} ({self.date})"
 
 class SubstitutionTask(models.Model):
 
     class Status(models.TextChoices):
-        PENDING="PENDING","Pending"
-        ASSIGNED="ASSIGNED","Assigned"
 
-    timetable=models.ForeignKey(
+        PENDING = "PENDING", "Pending"
+
+        ASSIGNED = "ASSIGNED", "Assigned"
+
+    timetable = models.ForeignKey(
         Timetable,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="tasks"
     )
 
-    leave=models.ForeignKey(
+    leave = models.ForeignKey(
         Leave,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name="tasks"
     )
 
-    substitute_teacher=models.ForeignKey(
+    substitute_teacher = models.ForeignKey(
         Teacher,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        related_name="assigned_tasks"
     )
 
-    status=models.CharField(
+    status = models.CharField(
         max_length=20,
         choices=Status.choices,
         default=Status.PENDING
     )
 
-    created_at=models.DateTimeField(
+    assigned_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
         auto_now_add=True
     )
+
+    def __str__(self):
+
+        return (
+            f"{self.timetable.teacher.name}"
+            f" | "
+            f"{self.timetable.get_day_display()}"
+            f" P{self.timetable.period}"
+        )
