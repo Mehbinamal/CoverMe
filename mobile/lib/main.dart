@@ -16,6 +16,7 @@ Future<void> main () async {
         ChangeNotifierProvider(
           create: (_) => DashboardProvider(),
           create: (_) => TeacherProvider(),
+          create: (_) =>TeacherDetailsProvider(),
         ),
       ],
       child: const CoverMeApp(),
