@@ -4,8 +4,6 @@ import '../models/leave.dart';
 
 class LeaveRepository {
 
-  List<Leave> todayLeaves = [];
-
   Future<void> addLeave({
     required int teacherId,
     required String date,
@@ -141,29 +139,39 @@ Future<bool> isOnLeave({
 
   Future<void> loadTodayLeaves() async {
 
+    todayLeaves.clear();
+
     final today =
         DateTime.now()
             .toIso8601String()
             .split('T')
             .first;
 
-    todayLeaves =
-        await _leaveRepository
-            .getLeaves(today);
+    final leaves =
+        await _leaveRepository.getLeaves(today);
+
+    for (final leave in leaves) {
+
+      final teacher =
+          await TeacherRepository()
+              .getTeacherById(
+                  leave.teacherId);
+
+      if (teacher != null) {
+
+        todayLeaves.add(
+          LeaveItem(
+            leave: leave,
+            teacher: teacher,
+          ),
+        );
+
+      }
+
+    }
 
     notifyListeners();
 
   }
-  Future<void> delete(
-    Leave leave,
-  ) async {
-
-    await _leaveRepository
-        .deleteLeave(
-            leave.id!
-        );
-
-    await loadTodayLeaves();
-
-  }
+  
 }
