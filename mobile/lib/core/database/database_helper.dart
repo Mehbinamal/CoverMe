@@ -53,35 +53,7 @@ id INTEGER PRIMARY KEY AUTOINCREMENT,
 
 name TEXT NOT NULL UNIQUE,
 
-isHM INTEGER NOT NULL DEFAULT 0
-
-)
-
-""");
-
-    // Classroom
-
-    await db.execute("""
-
-CREATE TABLE classroom(
-
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-name TEXT NOT NULL UNIQUE
-
-)
-
-""");
-
-    // Subject
-
-    await db.execute("""
-
-CREATE TABLE subject(
-
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-name TEXT NOT NULL UNIQUE
+homeroom TEXT,
 
 )
 
@@ -91,30 +63,23 @@ name TEXT NOT NULL UNIQUE
     // Timetable
 
     await db.execute("""
-
 CREATE TABLE timetable(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-id INTEGER PRIMARY KEY AUTOINCREMENT,
+    teacherId INTEGER NOT NULL,
 
-teacherId INTEGER NOT NULL,
+    day INTEGER NOT NULL,
 
-classroomId INTEGER,
+    period INTEGER NOT NULL,
 
-subjectId INTEGER,
+    classroom TEXT,
 
-day INTEGER NOT NULL,
+    subject TEXT,
 
-period INTEGER NOT NULL,
+    FOREIGN KEY(teacherId) REFERENCES teacher(id),
 
-FOREIGN KEY(teacherId) REFERENCES teacher(id),
-
-FOREIGN KEY(classroomId) REFERENCES classroom(id),
-
-FOREIGN KEY(subjectId) REFERENCES subject(id),
-
-UNIQUE(teacherId, day, period)
-
-)
+    UNIQUE(teacherId, day, period)
+);
 
 """);
 
@@ -123,20 +88,18 @@ UNIQUE(teacherId, day, period)
     await db.execute("""
 
 CREATE TABLE leave_table(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-id INTEGER PRIMARY KEY AUTOINCREMENT,
+    teacherId INTEGER NOT NULL,
 
-teacherId INTEGER NOT NULL,
+    date TEXT NOT NULL,
 
-date TEXT NOT NULL,
+    reason TEXT,
 
-reason TEXT,
+    FOREIGN KEY(teacherId) REFERENCES teacher(id),
 
-FOREIGN KEY(teacherId) REFERENCES teacher(id),
-
-UNIQUE(teacherId, date)
-
-)
+    UNIQUE(teacherId, date)
+);
 
 """);
 
@@ -145,32 +108,26 @@ UNIQUE(teacherId, date)
     await db.execute("""
 
 CREATE TABLE task(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-id INTEGER PRIMARY KEY AUTOINCREMENT,
+    teacherId INTEGER NOT NULL,
 
-teacherId INTEGER NOT NULL,
+    assignedTeacherId INTEGER,
 
-assignedTeacherId INTEGER,
+    day INTEGER NOT NULL,
 
-classroomId INTEGER,
+    period INTEGER NOT NULL,
 
-subjectId INTEGER,
+    classroom TEXT,
 
-day INTEGER,
+    subject TEXT,
 
-period INTEGER,
+    status TEXT NOT NULL,
 
-status TEXT NOT NULL,
+    FOREIGN KEY(teacherId) REFERENCES teacher(id),
 
-FOREIGN KEY(teacherId) REFERENCES teacher(id),
-
-FOREIGN KEY(assignedTeacherId) REFERENCES teacher(id),
-
-FOREIGN KEY(classroomId) REFERENCES classroom(id),
-
-FOREIGN KEY(subjectId) REFERENCES subject(id)
-
-)
+    FOREIGN KEY(assignedTeacherId) REFERENCES teacher(id)
+);
 
 """);
   }
