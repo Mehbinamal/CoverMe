@@ -2,8 +2,7 @@ import '../core/database/database_helper.dart';
 import '../models/teacher.dart';
 
 class TeacherRepository {
-  Future<int> insertTeacher(
-      Teacher teacher) async {
+  Future<int> insertTeacher(Teacher teacher) async {
     final db = await DatabaseHelper.instance.database;
 
     return db.insert(
@@ -12,34 +11,29 @@ class TeacherRepository {
     );
   }
 
-  Future<Teacher?> getTeacherByName(
-      String name) async {
+  Future<Teacher?> getTeacher(String teacherCode) async {
     final db = await DatabaseHelper.instance.database;
 
     final result = await db.query(
       "teacher",
       where: "name=?",
-      whereArgs: [name],
+      whereArgs: [teacherCode],
     );
 
-    if (result.isEmpty) {
-      return null;
-    }
+    if (result.isEmpty) return null;
 
     return Teacher.fromMap(result.first);
   }
 
-  Future<int> getOrCreateTeacher(
-      String name) async {
-    final teacher =
-        await getTeacherByName(name);
+  Future<int> getOrCreateTeacher(String teacherCode) async {
+    final teacher = await getTeacher(teacherCode);
 
     if (teacher != null) {
       return teacher.id!;
     }
 
     return insertTeacher(
-      Teacher(name: name),
+      Teacher(name: teacherCode),
     );
   }
 
@@ -51,10 +45,19 @@ class TeacherRepository {
       orderBy: "name",
     );
 
-    return result
-        .map(
-          (e) => Teacher.fromMap(e),
-        )
-        .toList();
+    return result.map(Teacher.fromMap).toList();
+  }
+
+  Future<List<Teacher>> searchTeachers(String query) async {
+    final db = await DatabaseHelper.instance.database;
+
+    final result = await db.query(
+      "teacher",
+      where: "name LIKE ?",
+      whereArgs: ["%$query%"],
+      orderBy: "name",
+    );
+
+    return result.map(Teacher.fromMap).toList();
   }
 }

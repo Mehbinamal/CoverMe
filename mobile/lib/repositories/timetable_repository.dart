@@ -3,8 +3,7 @@ import '../models/timetable.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TimetableRepository {
-  Future<void> insert(
-      Timetable timetable) async {
+  Future<void> insert(Timetable timetable) async {
     final db = await DatabaseHelper.instance.database;
 
     await db.insert(
@@ -26,30 +25,61 @@ class TimetableRepository {
     );
 
     return result
-        .map(
-          (e) => Timetable.fromMap(e),
-        )
+        .map(Timetable.fromMap)
         .toList();
   }
 
-  Future<List<Timetable>> periodEntries(
+  Future<List<Timetable>> getByDay(int day) async {
+    final db = await DatabaseHelper.instance.database;
+
+    final result = await db.query(
+      "timetable",
+      where: "day=?",
+      whereArgs: [day],
+      orderBy: "period",
+    );
+
+    return result
+        .map(Timetable.fromMap)
+        .toList();
+  }
+
+  Future<List<Timetable>> getByDayAndPeriod(
       int day,
-      int period) async {
+      int period,
+  ) async {
     final db = await DatabaseHelper.instance.database;
 
     final result = await db.query(
       "timetable",
       where: "day=? AND period=?",
+      whereArgs: [day, period],
+    );
+
+    return result
+        .map(Timetable.fromMap)
+        .toList();
+  }
+
+  Future<Timetable?> getTeacherPeriod(
+    int teacherId,
+    int day,
+    int period,
+  ) async {
+    final db = await DatabaseHelper.instance.database;
+
+    final result = await db.query(
+      "timetable",
+      where: "teacherId=? AND day=? AND period=?",
       whereArgs: [
+        teacherId,
         day,
         period,
       ],
     );
 
-    return result
-        .map(
-          (e) => Timetable.fromMap(e),
-        )
-        .toList();
+    if (result.isEmpty) return null;
+
+    return Timetable.fromMap(result.first);
   }
 }
