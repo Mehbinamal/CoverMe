@@ -106,8 +106,8 @@ CREATE TABLE leave_table(
     // Task
 
     await db.execute("""
-
 CREATE TABLE task(
+
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
     teacherId INTEGER NOT NULL,
@@ -116,17 +116,22 @@ CREATE TABLE task(
 
     day INTEGER NOT NULL,
 
+    date TEXT NOT NULL,
+
     period INTEGER NOT NULL,
 
-    classroom TEXT,
+    classroom TEXT NOT NULL,
 
-    subject TEXT,
+    subject TEXT NOT NULL,
 
     status TEXT NOT NULL,
 
     FOREIGN KEY(teacherId) REFERENCES teacher(id),
 
-    FOREIGN KEY(assignedTeacherId) REFERENCES teacher(id)
+    FOREIGN KEY(assignedTeacherId) REFERENCES teacher(id),
+
+    UNIQUE(teacherId, day, period, date)
+
 );
 
 """);

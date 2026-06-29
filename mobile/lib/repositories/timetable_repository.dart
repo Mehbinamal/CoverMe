@@ -102,4 +102,45 @@ class TimetableRepository {
 
     return result.isNotEmpty;
     }
+
+    Future<List<Timetable>> getTeacherDayTimetable(
+        int teacherId,
+        int day,
+        ) async {
+
+        final db = await DatabaseHelper.instance.database;
+
+        final result = await db.query(
+            "timetable",
+            where: "teacherId=? AND day=?",
+            whereArgs: [
+            teacherId,
+            day,
+            ],
+            orderBy: "period",
+        );
+
+        return result
+            .map(Timetable.fromMap)
+            .toList();
+
+    }
+
+    Future<List<Timetable>> getTodayHM(
+            int day,
+        ) async {
+
+            final hm =
+                await TeacherRepository()
+                    .getHM();
+
+            if(hm==null){
+                return [];
+            }
+
+            return teacherTimetable(
+                hm.id!,
+            );
+
+        }
 }

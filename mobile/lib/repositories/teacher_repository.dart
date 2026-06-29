@@ -60,4 +60,28 @@ class TeacherRepository {
 
     return result.map(Teacher.fromMap).toList();
   }
+
+  Future<Teacher?> getTeacherById(int id) async {
+
+    final db = await DatabaseHelper.instance.database;
+
+    final result = await db.query(
+      "teacher",
+      where: "id=?",
+      whereArgs: [id],
+    );
+
+    if(result.isEmpty) return null;
+
+    return Teacher.fromMap(result.first);
+
+  }
+
+  Future<Teacher?> getHM() async {
+
+    return getTeacher(
+        AppConstants.hmCode,
+    );
+
+  }
 }

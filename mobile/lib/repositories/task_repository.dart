@@ -1,15 +1,7 @@
 import '../core/database/database_helper.dart';
+import 'package:sqflite/sqflite.dart';
 
 class TaskRepository {
-  Future<void> createTask(
-      Map<String, dynamic> task) async {
-    final db = await DatabaseHelper.instance.database;
-
-    await db.insert(
-      "task",
-      task,
-    );
-  }
 
   Future<List<Task>> pendingTasks() async {
 
@@ -65,5 +57,15 @@ class TaskRepository {
     return result
         .map((e) => Task.fromMap(e))
         .toList();
+    }
+
+    Future<void> createTask(Task task) async {
+        final db = await DatabaseHelper.instance.database;
+
+        await db.insert(
+            "task",
+            task.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.ignore,
+        );
     }
 }

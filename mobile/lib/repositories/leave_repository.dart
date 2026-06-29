@@ -33,4 +33,25 @@ class LeaveRepository {
       .toList();
 
 }
+
+Future<bool> isOnLeave({
+    required int teacherId,
+    required String date,
+    }) async {
+
+    final db =
+        await DatabaseHelper.instance.database;
+
+    final result = await db.query(
+        "leave_table",
+        where: "teacherId=? AND date=?",
+        whereArgs: [
+        teacherId,
+        date,
+        ],
+        limit: 1,
+    );
+
+    return result.isNotEmpty;
+    }
 }
