@@ -82,4 +82,24 @@ class TimetableRepository {
 
     return Timetable.fromMap(result.first);
   }
+
+  Future<bool> teachesClass(
+    int teacherId,
+    String classroom,
+    ) async {
+
+    final db = await DatabaseHelper.instance.database;
+
+    final result = await db.query(
+        "timetable",
+        where: "teacherId=? AND classroom=?",
+        whereArgs: [
+        teacherId,
+        classroom,
+        ],
+        limit: 1,
+    );
+
+    return result.isNotEmpty;
+    }
 }
