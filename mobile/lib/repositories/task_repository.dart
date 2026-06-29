@@ -68,4 +68,26 @@ class TaskRepository {
             conflictAlgorithm: ConflictAlgorithm.ignore,
         );
     }
+
+    Future<int> pendingCount() async {
+
+        final db =
+            await DatabaseHelper.instance.database;
+
+        final result =
+            await db.rawQuery("""
+
+        SELECT COUNT(*)
+
+        FROM task
+
+        WHERE status=?
+
+        """,[
+            TaskStatus.pending,
+        ]);
+
+        return Sqflite.firstIntValue(result) ?? 0;
+
+        }
 }

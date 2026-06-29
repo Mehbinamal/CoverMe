@@ -1,14 +1,28 @@
-import 'period_model.dart';
+import 'teacher.dart';
+import 'timetable.dart';
+import 'task.dart';
+import 'leave.dart';
 
-class DashboardModel {
-  final int leaveCount;
+class Dashboard {
+
+  final Teacher hm;
+
+  final List<Timetable> timetable;
+
   final int pendingTasks;
 
-  final List<PeriodModel> timetable;
+  final int leaveCount;
 
-  const DashboardModel({
-    required this.leaveCount,
-    required this.pendingTasks,
+  const Dashboard({
+
+    required this.hm,
+
     required this.timetable,
+
+    required this.pendingTasks,
+
+    required this.leaveCount,
+
   });
+
 }

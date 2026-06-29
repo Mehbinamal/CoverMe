@@ -1,4 +1,5 @@
 import '../core/database/database_helper.dart';
+import 'package:sqflite/sqflite.dart';
 
 class LeaveRepository {
   Future<void> addLeave({
@@ -54,4 +55,28 @@ Future<bool> isOnLeave({
 
     return result.isNotEmpty;
     }
+
+    Future<int> leaveCount(
+        String date,
+        ) async {
+
+        final db =
+            await DatabaseHelper.instance.database;
+
+        final result =
+            await db.rawQuery("""
+
+        SELECT COUNT(*)
+
+        FROM leave_table
+
+        WHERE date=?
+
+        """,[
+            date,
+        ]);
+
+        return Sqflite.firstIntValue(result) ?? 0;
+
+        }
 }
