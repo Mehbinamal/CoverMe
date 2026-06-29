@@ -53,7 +53,7 @@ id INTEGER PRIMARY KEY AUTOINCREMENT,
 
 name TEXT NOT NULL UNIQUE,
 
-homeroom TEXT,
+homeroom TEXT
 
 )
 

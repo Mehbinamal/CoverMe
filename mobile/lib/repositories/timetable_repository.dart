@@ -1,5 +1,6 @@
 import '../core/database/database_helper.dart';
 import '../models/timetable.dart';
+import 'package:sqflite/sqflite.dart';
 
 class TimetableRepository {
   Future<void> insert(
@@ -9,6 +10,7 @@ class TimetableRepository {
     await db.insert(
       "timetable",
       timetable.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
 

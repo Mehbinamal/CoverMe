@@ -1,196 +1,62 @@
-import 'package:flutter/services.dart';
 import 'package:csv/csv.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:flutter/services.dart';
 
-import '../core/database/database_helper.dart';
-
-const Map<String, int> dayMap = {
-  "MON": 1,
-  "TUE": 2,
-  "WED": 3,
-  "THU": 4,
-  "FRI": 5,
-};
+import '../models/timetable.dart';
+import '../repositories/teacher_repository.dart';
+import '../repositories/timetable_repository.dart';
 
 class CsvImportService {
-  Future<void> importTimetable() async {
-    final db = await DatabaseHelper.instance.database;
+  final TeacherRepository teacherRepository = TeacherRepository();
+  final TimetableRepository timetableRepository = TimetableRepository();
 
-    final csvString =
-        await rootBundle.loadString(
+  static const Map<String, int> dayMap = {
+    "MON": 1,
+    "TUE": 2,
+    "WED": 3,
+    "THU": 4,
+    "FRI": 5,
+  };
+
+  Future<void> importTimetable() async {
+    print("Reading CSV...");
+
+    final csvString = await rootBundle.loadString(
       "assets/data/teachers_timetable.csv",
     );
 
-    final rows = CsvToListConverter(
-      eol: "\n",
-    ).convert(csvString);
+    final rows = const CsvToListConverter().convert(csvString);
 
-    // Remove header
-    rows.removeAt(0);
+    rows.removeAt(0); // Remove header
 
-    await db.transaction((txn) async {
-      final teacherCache = <String, int>{};
-      final classroomCache = <String, int>{};
-      final subjectCache = <String, int>{};
+    print("Rows found: ${rows.length}");
 
-      for (final row in rows) {
-        final teacher =
-            row[0].toString().trim();
+    for (final row in rows) {
+      final teacherCode = row[0].toString().trim();
 
-        final day =
-            dayMap[row[1].toString().trim().toUpperCase()]!;
+      final day = dayMap[
+          row[1].toString().trim().toUpperCase()]!;
 
-        final period =
-            (row[2] as num).toInt();
+      final period = (row[2] as num).toInt();
 
-        final classroom =
-            row[3].toString().trim();
+      final classroom = row[3].toString().trim();
 
-        final subject =
-            row[4].toString().trim();
-        //---------------------------------
-        // Teacher
-        //---------------------------------
+      final subject = row[4].toString().trim();
 
-        int teacherId;
+      final teacherId =
+          await teacherRepository.getOrCreateTeacher(
+              teacherCode);
 
-        if (teacherCache.containsKey(teacher)) {
-          teacherId = teacherCache[teacher]!;
-        } else {
-          teacherId = await _insertTeacher(
-            txn,
-            teacher,
-          );
+      await timetableRepository.insert(
+        Timetable(
+          teacherId: teacherId,
+          day: day,
+          period: period,
+          classroom: classroom,
+          subject: subject,
+        ),
+      );
+    }
 
-          teacherCache[teacher] =
-              teacherId;
-        }
-
-        //---------------------------------
-        // Classroom
-        //---------------------------------
-
-        int? classroomId;
-
-        if (classroom.isNotEmpty) {
-          if (classroomCache.containsKey(
-              classroom)) {
-            classroomId =
-                classroomCache[classroom];
-          } else {
-            classroomId =
-                await _insertClassroom(
-              txn,
-              classroom,
-            );
-
-            classroomCache[classroom] =
-                classroomId;
-          }
-        }
-
-        //---------------------------------
-        // Subject
-        //---------------------------------
-
-        int? subjectId;
-
-        if (subject.isNotEmpty) {
-          if (subjectCache.containsKey(
-              subject)) {
-            subjectId =
-                subjectCache[subject];
-          } else {
-            subjectId =
-                await _insertSubject(
-              txn,
-              subject,
-            );
-
-            subjectCache[subject] =
-                subjectId;
-          }
-        }
-
-        //---------------------------------
-        // Timetable
-        //---------------------------------
-
-        await txn.insert(
-          "timetable",
-          {
-            "teacherId": teacherId,
-            "classroomId": classroomId,
-            "subjectId": subjectId,
-            "day": day,
-            "period": period,
-          },
-          conflictAlgorithm:
-              ConflictAlgorithm.ignore,
-        );
-      }
-    });
+    print("CSV imported successfully.");
   }
-
-  //----------------------------------------
-  // Teacher
-  //----------------------------------------
-
-  Future<int> _insertTeacher(
-    Transaction txn,
-    String name,
-  ) async {
-    return await txn.insert(
-      "teacher",
-      {
-        "name": name,
-        "isHM": 0,
-      },
-      conflictAlgorithm:
-          ConflictAlgorithm.ignore,
-    );
-  }
-
-  //----------------------------------------
-
-  Future<int> _insertClassroom(
-    Transaction txn,
-    String name,
-  ) async {
-    return await txn.insert(
-      "classroom",
-      {
-        "name": name,
-      },
-      conflictAlgorithm:
-          ConflictAlgorithm.ignore,
-    );
-  }
-
-  //----------------------------------------
-
-  Future<int> _insertSubject(
-    Transaction txn,
-    String name,
-  ) async {
-    return await txn.insert(
-      "subject",
-      {
-        "name": name,
-      },
-      conflictAlgorithm:
-          ConflictAlgorithm.ignore,
-    );
-  }
-
-  Future<void> printTeachers() async {
-
-    final db = await DatabaseHelper.instance.database;
-
-    final teachers =
-        await db.query("teacher");
-
-    print(teachers);
-
-}
 }
