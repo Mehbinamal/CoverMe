@@ -3,6 +3,9 @@ import 'package:sqflite/sqflite.dart';
 import '../models/leave.dart';
 
 class LeaveRepository {
+
+  List<Leave> todayLeaves = [];
+
   Future<void> addLeave({
     required int teacherId,
     required String date,
@@ -101,4 +104,66 @@ Future<bool> isOnLeave({
 
       return result.isNotEmpty;
     }
+
+  Future<List<Leave>> getLeavesByDate(
+      String date,
+  ) async {
+
+    final db =
+        await DatabaseHelper.instance.database;
+
+    final result = await db.query(
+      "leave_table",
+      where: "date=?",
+      whereArgs: [date],
+    );
+
+    return result
+        .map(Leave.fromMap)
+        .toList();
+
+  }
+
+  Future<void> deleteLeave(
+    int id,
+  ) async {
+
+    final db =
+        await DatabaseHelper.instance.database;
+
+    await db.delete(
+      "leave_table",
+      where: "id=?",
+      whereArgs: [id],
+    );
+
+  }
+
+  Future<void> loadTodayLeaves() async {
+
+    final today =
+        DateTime.now()
+            .toIso8601String()
+            .split('T')
+            .first;
+
+    todayLeaves =
+        await _leaveRepository
+            .getLeaves(today);
+
+    notifyListeners();
+
+  }
+  Future<void> delete(
+    Leave leave,
+  ) async {
+
+    await _leaveRepository
+        .deleteLeave(
+            leave.id!
+        );
+
+    await loadTodayLeaves();
+
+  }
 }
