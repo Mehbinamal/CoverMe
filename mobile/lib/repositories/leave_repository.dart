@@ -18,14 +18,19 @@ class LeaveRepository {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getLeaves(
-      String date) async {
-    final db = await DatabaseHelper.instance.database;
+  Future<List<Leave>> getLeaves(String date) async {
 
-    return db.query(
-      "leave_table",
-      where: "date=?",
-      whereArgs: [date],
-    );
-  }
+  final db = await DatabaseHelper.instance.database;
+
+  final result = await db.query(
+    "leave_table",
+    where: "date=?",
+    whereArgs: [date],
+  );
+
+  return result
+      .map((e)=>Leave.fromMap(e))
+      .toList();
+
+}
 }
