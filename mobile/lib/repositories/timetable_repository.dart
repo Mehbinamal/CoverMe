@@ -1,6 +1,7 @@
 import '../core/database/database_helper.dart';
 import '../models/timetable.dart';
 import 'package:sqflite/sqflite.dart';
+import 'teacher_repository.dart';
 
 class TimetableRepository {
   Future<void> insert(Timetable timetable) async {

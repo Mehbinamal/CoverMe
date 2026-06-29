@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
 
-import '../models/dashboard_model.dart';
-import '../services/dashboard_service.dart';
+import '../models/dashboard.dart';
+import '../repositories/dashboard_repository.dart';
 
 class DashboardProvider extends ChangeNotifier {
+  final DashboardRepository _repository = DashboardRepository();
 
-  final DashboardService _service = DashboardService();
-
-  DashboardModel? dashboard;
+  Dashboard? dashboard;
 
   bool isLoading = false;
 
+  String? error;
+
   Future<void> loadDashboard() async {
+    try {
+      isLoading = true;
+      error = null;
+      notifyListeners();
 
-    isLoading = true;
+      dashboard = await _repository.loadDashboard(
+        day: DateTime.now().weekday,
+        date: DateTime.now().toIso8601String().split('T').first,
+      );
 
-    notifyListeners();
-
-    dashboard = await _service.getDashboard();
-
-    isLoading = false;
-
-    notifyListeners();
-
+    } catch (e) {
+      error = e.toString();
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
-
 }

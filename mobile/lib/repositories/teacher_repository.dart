@@ -1,5 +1,7 @@
 import '../core/database/database_helper.dart';
 import '../models/teacher.dart';
+import 'teacher_repository.dart';
+import '../core/constants/app_constants.dart';
 
 class TeacherRepository {
   Future<int> insertTeacher(Teacher teacher) async {

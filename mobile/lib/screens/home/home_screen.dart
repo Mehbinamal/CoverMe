@@ -1,15 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/dashboard_provider.dart';
 
 import '../../widgets/current_period_card.dart';
 import '../../widgets/dashboard_card.dart';
 import '../../widgets/greeting_header.dart';
 import '../../widgets/timetable_card.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() =>
+      _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<DashboardProvider>().loadDashboard();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+    final provider =
+        context.watch<DashboardProvider>();
+
+    if (provider.isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (provider.error != null) {
+      return Scaffold(
+        body: Center(
+          child: Text(provider.error!),
+        ),
+      );
+    }
+
+    final dashboard = provider.dashboard!;
+
     return Scaffold(
       floatingActionButton:
           FloatingActionButton.extended(
@@ -21,9 +62,12 @@ class HomeScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const GreetingHeader(),
 
-              const CurrentPeriodCard(),
+              GreetingHeader(
+                teacherName: dashboard.hm.name,
+              ),
+
+              CurrentPeriodCard(currentPeriod: 3),
 
               const SizedBox(height: 18),
 
@@ -33,17 +77,24 @@ class HomeScreen extends StatelessWidget {
                   horizontal: 20,
                 ),
                 child: Row(
-                  children: const [
+                  children: [
+
                     DashboardCard(
                       title: "Teachers on Leave",
-                      value: "3",
+                      value:
+                          dashboard.leaveCount
+                              .toString(),
                       icon: Icons.person_off,
                       color: Colors.red,
                     ),
-                    SizedBox(width: 14),
+
+                    const SizedBox(width: 14),
+
                     DashboardCard(
                       title: "Pending Tasks",
-                      value: "5",
+                      value:
+                          dashboard.pendingTasks
+                              .toString(),
                       icon: Icons.assignment,
                       color: Colors.orange,
                     ),
@@ -53,7 +104,10 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              const TimetableCard(),
+              TimetableCard(
+                timetable:
+                    dashboard.timetable,
+              ),
 
               const SizedBox(height: 100),
             ],

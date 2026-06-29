@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class GreetingHeader extends StatelessWidget {
-  const GreetingHeader({super.key});
+  final String teacherName;
+
+  const GreetingHeader({
+    super.key,
+    required this.teacherName,
+  });
 
   String _greeting() {
     final hour = DateTime.now().hour;
@@ -20,38 +24,38 @@ class GreetingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final today = DateFormat("EEEE, d MMMM").format(DateTime.now());
-
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 24,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.all(20),
+      child: Row(
         children: [
-          Text(
-            "👋 ${_greeting()}",
-            style: const TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
+          Expanded(
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _greeting(),
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  teacherName,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium
+                      ?.copyWith(
+                        fontWeight:
+                            FontWeight.bold,
+                      ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 6),
-          const Text(
-            "HM",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            today,
-            style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 15,
-            ),
+          const CircleAvatar(
+            radius: 28,
+            child: Icon(Icons.person),
           ),
         ],
       ),

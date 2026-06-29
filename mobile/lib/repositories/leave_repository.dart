@@ -1,5 +1,6 @@
 import '../core/database/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
+import '../models/leave.dart';
 
 class LeaveRepository {
   Future<void> addLeave({

@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import '../core/utils/period_utils.dart';
 
 class CurrentPeriodCard extends StatelessWidget {
-  const CurrentPeriodCard({ super.key});
+  final int currentPeriod;
+  const CurrentPeriodCard({
+    super.key,
+    required this.currentPeriod,
+  });
 
   @override
   Widget build(BuildContext context) {
