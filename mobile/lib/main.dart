@@ -5,22 +5,23 @@ import 'app.dart';
 import 'providers/dashboard_provider.dart';
 import 'providers/teacher_provider.dart';
 import 'core/database/database_initializer.dart';
+import 'providers/teacher_details_provider.dart';
+import 'providers/leave_provider.dart';
 
 Future<void> main () async {
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseInitializer.initialize();
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) => DashboardProvider(),
-          create: (_) => TeacherProvider(),
-          create: (_) =>TeacherDetailsProvider(),
-          create: (_) => LeaveProvider(),
-        ),
-      ],
-      child: const CoverMeApp(),
+  MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => DashboardProvider()),
+      ChangeNotifierProvider(create: (_) => TeacherProvider()),
+      ChangeNotifierProvider(create: (_) => TeacherDetailsProvider()),
+      ChangeNotifierProvider(create: (_) => LeaveProvider()),
+    ],
+    child: const CoverMeApp(),
     ),
   );
+  
 }

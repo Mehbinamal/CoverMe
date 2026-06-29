@@ -92,4 +92,22 @@ class TaskRepository {
         return Sqflite.firstIntValue(result) ?? 0;
 
         }
+
+        
+    Future<void> deleteTasksForLeave({
+    required int teacherId,
+    required String date,
+    }) async {
+
+    final db = await DatabaseHelper.instance.database;
+
+    await db.delete(
+        "task",
+        where: "teacherId=? AND date=?",
+        whereArgs: [
+        teacherId,
+        date,
+        ],
+    );
+    }
 }

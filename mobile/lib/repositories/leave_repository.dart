@@ -137,41 +137,5 @@ Future<bool> isOnLeave({
 
   }
 
-  Future<void> loadTodayLeaves() async {
-
-    todayLeaves.clear();
-
-    final today =
-        DateTime.now()
-            .toIso8601String()
-            .split('T')
-            .first;
-
-    final leaves =
-        await _leaveRepository.getLeaves(today);
-
-    for (final leave in leaves) {
-
-      final teacher =
-          await TeacherRepository()
-              .getTeacherById(
-                  leave.teacherId);
-
-      if (teacher != null) {
-
-        todayLeaves.add(
-          LeaveItem(
-            leave: leave,
-            teacher: teacher,
-          ),
-        );
-
-      }
-
-    }
-
-    notifyListeners();
-
-  }
   
 }

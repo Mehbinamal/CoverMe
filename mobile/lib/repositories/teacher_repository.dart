@@ -86,19 +86,4 @@ class TeacherRepository {
     );
 
   }
-
-  Future<Teacher?> getTeacherById(int id) async {
-    final db = await DatabaseHelper.instance.database;
-
-    final result = await db.query(
-      "teacher",
-      where: "id=?",
-      whereArgs: [id],
-      limit: 1,
-    );
-
-    if (result.isEmpty) return null;
-
-    return Teacher.fromMap(result.first);
-  }
 }

@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../home/home_screen.dart';
-import '../tasks/tasks_screen.dart';
 import '../teachers/teacher_screen.dart';
+import '../leaves/leave_screen.dart';
+import '../tasks/tasks_screen.dart';
+import '../settings/settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<MainScreen> createState() =>
+      _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
@@ -19,9 +22,13 @@ class _MainScreenState extends State<MainScreen> {
 
     HomeScreen(),
 
+    TeacherScreen(),
+
+    LeaveScreen(),
+
     TasksScreen(),
 
-    TeachersScreen(),
+    SettingsScreen(),
 
   ];
 
@@ -49,33 +56,33 @@ class _MainScreenState extends State<MainScreen> {
         destinations: const [
 
           NavigationDestination(
-
             icon: Icon(Icons.home_outlined),
-
             selectedIcon: Icon(Icons.home),
-
             label: "Home",
-
           ),
 
           NavigationDestination(
-
-            icon: Icon(Icons.assignment_outlined),
-
-            selectedIcon: Icon(Icons.assignment),
-
-            label: "Tasks",
-
-          ),
-
-          NavigationDestination(
-
             icon: Icon(Icons.people_outline),
-
             selectedIcon: Icon(Icons.people),
-
             label: "Teachers",
+          ),
 
+          NavigationDestination(
+            icon: Icon(Icons.event_busy_outlined),
+            selectedIcon: Icon(Icons.event_busy),
+            label: "Leaves",
+          ),
+
+          NavigationDestination(
+            icon: Icon(Icons.assignment_outlined),
+            selectedIcon: Icon(Icons.assignment),
+            label: "Tasks",
+          ),
+
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: "Settings",
           ),
 
         ],
@@ -85,4 +92,5 @@ class _MainScreenState extends State<MainScreen> {
     );
 
   }
+
 }

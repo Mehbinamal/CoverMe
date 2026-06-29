@@ -23,7 +23,7 @@ class TaskGenerationService {
 
   }) async {
     
-    Final day = DateTime.parse(date).weekday;
+    final day = DateTime.parse(date).weekday;
     final leaves =
         await leaveRepository.getLeaves(date);
 

@@ -1,3 +1,6 @@
+import 'leave.dart';
+import 'teacher.dart';
+
 class LeaveItem {
   final Leave leave;
   final Teacher teacher;

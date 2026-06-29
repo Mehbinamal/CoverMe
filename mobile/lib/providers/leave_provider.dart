@@ -3,8 +3,16 @@ import 'package:flutter/material.dart';
 import '../models/teacher.dart';
 import '../repositories/leave_repository.dart';
 import '../services/task_generation_service.dart';
+import '../models/leave.dart';
+import '../repositories/teacher_repository.dart';
+import '../models/leave_item.dart';
+import '../repositories/task_repository.dart';
 
 class LeaveProvider extends ChangeNotifier {
+
+  List<LeaveItem> todayLeaves = [];
+
+  final TaskRepository _taskRepository = TaskRepository();
 
   final LeaveRepository _leaveRepository =
       LeaveRepository();
@@ -40,6 +48,16 @@ class LeaveProvider extends ChangeNotifier {
       return false;
     }
 
+
+    isSaving = true;
+    notifyListeners();
+
+    final date =
+        selectedDate
+            .toIso8601String()
+            .split('T')
+            .first;
+
     if (await _leaveRepository.alreadyOnLeave(
       teacherId: selectedTeacher!.id!,
       date: date,
@@ -50,15 +68,6 @@ class LeaveProvider extends ChangeNotifier {
 
         return false;
     }
-
-    isSaving = true;
-    notifyListeners();
-
-    final date =
-        selectedDate
-            .toIso8601String()
-            .split('T')
-            .first;
 
     await _leaveRepository.addLeave(
       teacherId: selectedTeacher!.id!,
@@ -76,4 +85,58 @@ class LeaveProvider extends ChangeNotifier {
 
     return true;
   }
+
+  Future<void> loadTodayLeaves() async {
+
+    todayLeaves.clear();
+
+    final today =
+        DateTime.now()
+            .toIso8601String()
+            .split('T')
+            .first;
+
+    final leaves =
+        await _leaveRepository.getLeaves(today);
+
+    for (final leave in leaves) {
+
+      final teacher =
+          await TeacherRepository()
+              .getTeacherById(
+                  leave.teacherId);
+
+      if (teacher != null) {
+
+        todayLeaves.add(
+          LeaveItem(
+            leave: leave,
+            teacher: teacher,
+          ),
+        );
+
+      }
+
+    }
+
+    notifyListeners();
+
+  }
+  
+  Future<void> delete(
+    Leave leave,
+    ) async {
+
+    await _taskRepository.deleteTasksForLeave(
+    teacherId: leave.teacherId,
+    date: leave.date,
+    );
+
+    await _leaveRepository.deleteLeave(
+    leave.id!,
+    );
+
+    await loadTodayLeaves();
+
+    }
 }
