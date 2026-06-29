@@ -3,8 +3,9 @@ import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'providers/dashboard_provider.dart';
+import 'core/database/database_initializer.dart';
 
-void main() {
+Future<void> main () async {
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseInitializer.initialize();
 
