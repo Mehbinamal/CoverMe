@@ -31,6 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+    assets:
+      - assets/data/teachers_timetable.csv
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -43,6 +46,11 @@ dependencies:
   go_router: ^17.3.0
   google_fonts: ^8.1.0
   flutter_svg: ^2.3.0
+  sqflite: ^2.4.2+1
+  path: ^1.9.1
+  path_provider: ^2.1.6
+  csv: ^8.0.0
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:

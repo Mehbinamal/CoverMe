@@ -5,6 +5,9 @@ import 'app.dart';
 import 'providers/dashboard_provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseInitializer.initialize();
+
   runApp(
     MultiProvider(
       providers: [
