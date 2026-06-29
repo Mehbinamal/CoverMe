@@ -144,4 +144,24 @@ class TimetableRepository {
             );
 
         }
+    Future<List<Timetable?>> getCompleteTeacherDay(
+        int teacherId,
+        int day,
+        ) async {
+        final timetable =
+            await teacherTimetable(teacherId);
+
+        final Map<int, Timetable> periodMap = {};
+
+        for (final entry in timetable) {
+            if (entry.day == day) {
+            periodMap[entry.period] = entry;
+            }
+        }
+
+        return List.generate(
+            7,
+            (index) => periodMap[index + 1],
+        );
+    }
 }

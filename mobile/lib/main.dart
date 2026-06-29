@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'app.dart';
 import 'providers/dashboard_provider.dart';
+import 'providers/teacher_provider.dart';
 import 'core/database/database_initializer.dart';
 
 Future<void> main () async {
@@ -14,6 +15,7 @@ Future<void> main () async {
       providers: [
         ChangeNotifierProvider(
           create: (_) => DashboardProvider(),
+          create: (_) => TeacherProvider(),
         ),
       ],
       child: const CoverMeApp(),

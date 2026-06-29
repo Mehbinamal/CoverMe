@@ -7,7 +7,7 @@ class Dashboard {
 
   final Teacher hm;
 
-  final List<Timetable> timetable;
+  final List<Timetable?> timetable;
 
   final int pendingTasks;
 

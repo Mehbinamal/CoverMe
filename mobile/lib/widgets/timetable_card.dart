@@ -4,7 +4,7 @@ import '../models/timetable.dart';
 import 'period_tile.dart';
 
 class TimetableCard extends StatelessWidget {
-  final List<Timetable> timetable;
+  final List<Timetable?> timetable;
 
   const TimetableCard({
     super.key,
@@ -19,26 +19,29 @@ class TimetableCard extends StatelessWidget {
         padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "My Timetable",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-            const SizedBox(height: 15),
+            children: List.generate(
+  timetable.length,
+  (index) {
+    final period = timetable[index];
 
-            ...timetable.map(
-              (period) => PeriodTile(
-                period: period.period,
-                classroom: period.classroom,
-                subject: period.subject,
-              ),
+    if (period == null) {
+      return PeriodTile(
+        period: index + 1,
+        classroom: "",
+        subject: "",
+        isFree: true,
+      );
+    }
+
+    return PeriodTile(
+      period: period.period,
+      classroom: period.classroom,
+      subject: period.subject,
+    );
+  },
+),
             ),
-          ],
         ),
-      ),
     );
   }
 }

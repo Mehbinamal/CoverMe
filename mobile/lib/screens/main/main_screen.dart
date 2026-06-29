@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../home/home_screen.dart';
 import '../tasks/tasks_screen.dart';
-import '../teachers/teachers_screen.dart';
+import '../teachers/teacher_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
