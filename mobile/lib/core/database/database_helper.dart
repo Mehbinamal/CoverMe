@@ -29,6 +29,11 @@ class DatabaseHelper {
     return openDatabase(
       path,
       version: 1,
+
+      onConfigure: (db) async {
+      await db.execute("PRAGMA foreign_keys = ON;");
+      },
+
       onCreate: _createDatabase,
     );
   }
@@ -46,11 +51,9 @@ CREATE TABLE teacher(
 
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-name TEXT,
+name TEXT NOT NULL UNIQUE,
 
-classroom_id TEXT,
-
-isHM INTEGER
+isHM INTEGER NOT NULL DEFAULT 0
 
 )
 
@@ -64,7 +67,7 @@ CREATE TABLE classroom(
 
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-name TEXT
+name TEXT NOT NULL UNIQUE
 
 )
 
@@ -78,11 +81,12 @@ CREATE TABLE subject(
 
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-name TEXT
+name TEXT NOT NULL UNIQUE
 
 )
 
 """);
+
 
     // Timetable
 
@@ -92,15 +96,23 @@ CREATE TABLE timetable(
 
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-teacherId INTEGER,
+teacherId INTEGER NOT NULL,
 
 classroomId INTEGER,
 
 subjectId INTEGER,
 
-day INTEGER,
+day INTEGER NOT NULL,
 
-period INTEGER
+period INTEGER NOT NULL,
+
+FOREIGN KEY(teacherId) REFERENCES teacher(id),
+
+FOREIGN KEY(classroomId) REFERENCES classroom(id),
+
+FOREIGN KEY(subjectId) REFERENCES subject(id),
+
+UNIQUE(teacherId, day, period)
 
 )
 
@@ -114,11 +126,15 @@ CREATE TABLE leave_table(
 
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-teacherId INTEGER,
+teacherId INTEGER NOT NULL,
 
-date TEXT,
+date TEXT NOT NULL,
 
-reason TEXT
+reason TEXT,
+
+FOREIGN KEY(teacherId) REFERENCES teacher(id),
+
+UNIQUE(teacherId, date)
 
 )
 
@@ -132,7 +148,7 @@ CREATE TABLE task(
 
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-teacherId INTEGER,
+teacherId INTEGER NOT NULL,
 
 assignedTeacherId INTEGER,
 
@@ -144,7 +160,15 @@ day INTEGER,
 
 period INTEGER,
 
-status TEXT
+status TEXT NOT NULL,
+
+FOREIGN KEY(teacherId) REFERENCES teacher(id),
+
+FOREIGN KEY(assignedTeacherId) REFERENCES teacher(id),
+
+FOREIGN KEY(classroomId) REFERENCES classroom(id),
+
+FOREIGN KEY(subjectId) REFERENCES subject(id)
 
 )
 
