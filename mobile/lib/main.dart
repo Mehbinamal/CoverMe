@@ -17,6 +17,7 @@ Future<void> main () async {
           create: (_) => DashboardProvider(),
           create: (_) => TeacherProvider(),
           create: (_) =>TeacherDetailsProvider(),
+          create: (_) => LeaveProvider(),
         ),
       ],
       child: const CoverMeApp(),

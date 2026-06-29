@@ -21,10 +21,9 @@ class TaskGenerationService {
 
     required String date,
 
-    required int day,
-
   }) async {
-
+    
+    Final day = DateTime.parse(date).weekday;
     final leaves =
         await leaveRepository.getLeaves(date);
 
