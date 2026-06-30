@@ -129,6 +129,16 @@ class _LeaveScreenState extends State<LeaveScreen> {
 
                       if (confirm == true) {
                         await provider.delete(item.leave);
+
+                          if (!context.mounted) return;
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Leave deleted successfully.",
+                              ),
+                            ),
+                          );
                       }
 
                     },
@@ -161,9 +171,33 @@ class _LeaveScreenState extends State<LeaveScreen> {
 
                 const Card(
                   child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      "No upcoming leaves.",
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: const [
+
+                        Icon(
+                          Icons.event_available,
+                          size: 48,
+                          color: Colors.grey,
+                        ),
+
+                        SizedBox(height: 12),
+
+                        Text(
+                          "No upcoming leaves",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        SizedBox(height: 6),
+
+                        Text(
+                          "Future leave requests will appear here.",
+                          textAlign: TextAlign.center,
+                        ),
+
+                      ],
                     ),
                   ),
                 )
