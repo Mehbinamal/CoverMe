@@ -24,7 +24,6 @@ class AvailabilityService {
     print("Teachers found: ${teachers.length}");
 
     for (final teacher in teachers) {
-
       // Skip absent teacher
       if (teacher.id == teacherId) {
         continue;
@@ -77,10 +76,9 @@ class AvailabilityService {
 
       bool teachesSameClass = false;
 
-      final weeklyTimetable =
-          await _timetableRepository.teacherTimetable(
-            teacher.id!,
-          );
+      final weeklyTimetable = await _timetableRepository.teacherTimetable(
+        teacher.id!,
+      );
 
       for (final entry in weeklyTimetable) {
         if (entry.classroom == classroom) {
@@ -94,7 +92,6 @@ class AvailabilityService {
       } else {
         others.add(teacher);
       }
-
     }
 
     print("Preferred teachers: ${preferred.length}");

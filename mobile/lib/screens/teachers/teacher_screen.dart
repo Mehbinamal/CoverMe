@@ -9,65 +9,55 @@ class TeacherScreen extends StatefulWidget {
   const TeacherScreen({super.key});
 
   @override
-  State<TeacherScreen> createState() =>
-      _TeacherScreenState();
+  State<TeacherScreen> createState() => _TeacherScreenState();
 }
 
-class _TeacherScreenState
-    extends State<TeacherScreen> {
-
+class _TeacherScreenState extends State<TeacherScreen> {
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) {
-      context
-          .read<TeacherProvider>()
-          .loadTeachers();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TeacherProvider>().loadTeachers();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider =
-        context.watch<TeacherProvider>();
+    final provider = context.watch<TeacherProvider>();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Teachers"),
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          "Teachers",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: Column(
         children: [
-
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: TextField(
               decoration: const InputDecoration(
                 hintText: "Search teacher...",
-                prefixIcon:
-                    Icon(Icons.search),
+                prefixIcon: Icon(Icons.search),
               ),
               onChanged: provider.search,
             ),
           ),
-
           Expanded(
             child: provider.isLoading
-                ? const Center(
-                    child:
-                        CircularProgressIndicator(),
-                  )
+                ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
-                    itemCount:
-                        provider.filteredTeachers
-                            .length,
-                    itemBuilder:
-                        (context, index) {
-                      final teacher =
-                          provider
-                                  .filteredTeachers[
-                              index];
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                      vertical: 8,
+                    ),
+                    itemCount: provider.filteredTeachers.length,
+                    itemBuilder: (context, index) {
+                      final teacher = provider.filteredTeachers[index];
 
                       return TeacherCard(
                         teacher: teacher,
@@ -76,10 +66,7 @@ class _TeacherScreenState
                             context,
                             MaterialPageRoute(
                               builder: (_) =>
-                                  TeacherDetailsScreen(
-                                teacher:
-                                    teacher,
-                              ),
+                                  TeacherDetailsScreen(teacher: teacher),
                             ),
                           );
                         },

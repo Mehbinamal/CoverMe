@@ -21,11 +21,9 @@ class LeaveCard extends StatelessWidget {
     final today = DateTime.now();
 
     final todayOnly = DateTime(today.year, today.month, today.day);
-    final leaveOnly =
-        DateTime(leaveDate.year, leaveDate.month, leaveDate.day);
+    final leaveOnly = DateTime(leaveDate.year, leaveDate.month, leaveDate.day);
 
-    final difference =
-        leaveOnly.difference(todayOnly).inDays;
+    final difference = leaveOnly.difference(todayOnly).inDays;
 
     if (difference == 0) {
       return "Today";
@@ -44,49 +42,33 @@ class LeaveCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  return Card(
-    margin: const EdgeInsets.symmetric(
-      horizontal: 16,
-      vertical: 6,
-    ),
-    child: ListTile(
-      leading: const CircleAvatar(
-        child: Icon(Icons.person_off),
-      ),
-      // Wrap the title in a Column to stack the date chip and the name
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // Aligns content to the left
-        mainAxisSize: MainAxisSize.min, // Prevents the column from taking up extra vertical space
-        children: [
-          // Your conditional date chip
-          if (_formatDate(leave.date) != "Today")
-            Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              child: Chip(
-                avatar: const Icon(
-                  Icons.calendar_today,
-                  size: 16,
-                ),
-                label: Text(
-                  _formatDate(leave.date),
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: ListTile(
+        leading: const CircleAvatar(child: Icon(Icons.person_off)),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_formatDate(leave.date) != "Today")
+              Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                child: Chip(
+                  avatar: const Icon(Icons.calendar_today, size: 16),
+                  label: Text(_formatDate(leave.date)),
                 ),
               ),
-            ),
-          // The teacher's name
-          Text(teacher.name),
-        ],
-      ),
-      subtitle: Text(
-        leave.reason.isEmpty ? "No reason" : leave.reason,
-      ),
-      trailing: IconButton(
-        icon: const Icon(
-          Icons.delete,
-          color: Colors.red,
+            Text(teacher.name),
+          ],
         ),
-        onPressed: onDelete,
+        subtitle: Text(leave.reason.isEmpty ? "No reason" : leave.reason),
+        trailing: IconButton(
+          icon: const Icon(Icons.delete, color: Colors.red),
+          onPressed: onDelete,
+        ),
       ),
-    ),
-  );
+    );
   }
 }

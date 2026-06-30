@@ -22,7 +22,6 @@ class DashboardProvider extends ChangeNotifier {
         day: DateTime.now().weekday,
         date: DateTime.now().toIso8601String().split('T').first,
       );
-
     } catch (e) {
       error = e.toString();
     } finally {

@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../../providers/leave_provider.dart';
 import '../../widgets/leave_card.dart';
+import '../../widgets/section_title.dart';
 import 'add_leave_screen.dart';
-import 'package:intl/intl.dart';
 
 class LeaveScreen extends StatefulWidget {
   const LeaveScreen({super.key});
@@ -14,7 +14,6 @@ class LeaveScreen extends StatefulWidget {
 }
 
 class _LeaveScreenState extends State<LeaveScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -26,249 +25,168 @@ class _LeaveScreenState extends State<LeaveScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final provider = context.watch<LeaveProvider>();
 
     return Scaffold(
-
       appBar: AppBar(
-        title: const Text("Leaves"),
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          "Leaves",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
-
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-
         onPressed: () async {
-
           await Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => const AddLeaveScreen(),
-            ),
+            MaterialPageRoute(builder: (_) => const AddLeaveScreen()),
           );
 
           provider.loadLeaves();
-
         },
       ),
-
-        body: RefreshIndicator(
-          onRefresh: () async {
-            await provider.loadLeaves();
-          },
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-
-              //-----------------------------------
-              // Today's Leaves
-              //-----------------------------------
-
-              const Text(
-                "Today's Leaves",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await provider.loadLeaves();
+        },
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            const SectionTitle(title: "Today's Leaves"),
+            if (provider.todayLeaves.isEmpty)
+              Card(
+                elevation: 2,
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-              ),
-
-              const SizedBox(height: 12),
-
-              if (provider.todayLeaves.isEmpty)
-
-                const Card(
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Text(
-                      "No teachers are on leave today.",
-                    ),
-                  ),
-                )
-
-              else
-
-                ...provider.todayLeaves.map(
-
-                  (item) => LeaveCard(
-
-                    leave: item.leave,
-
-                    teacher: item.teacher,
-
-                    onDelete: () async {
-
-                    final confirm =
-                          await showDialog<bool>(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: const Text(
-                            "Delete Leave?",
+                child: const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Text("No teachers are on leave today."),
+                ),
+              )
+            else
+              ...provider.todayLeaves.map(
+                (item) => LeaveCard(
+                  leave: item.leave,
+                  teacher: item.teacher,
+                  onDelete: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text("Delete Leave?"),
+                        content: const Text(
+                          "Are you sure you want to delete this leave?",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, false);
+                            },
+                            child: const Text("Cancel"),
                           ),
-                          content: const Text(
-                            "Are you sure you want to delete this leave?",
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.pop(context, true);
+                            },
+                            child: const Text("Delete"),
                           ),
-                          actions: [
+                        ],
+                      ),
+                    );
 
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context, false);
-                              },
-                              child: const Text("Cancel"),
-                            ),
+                    if (confirm == true) {
+                      await provider.delete(item.leave);
 
-                            FilledButton(
-                              onPressed: () {
-                                Navigator.pop(context, true);
-                              },
-                              child: const Text("Delete"),
-                            ),
+                      if (!context.mounted) return;
 
-                          ],
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Leave deleted successfully."),
                         ),
                       );
-
-                      if (confirm == true) {
-                        await provider.delete(item.leave);
-
-                          if (!context.mounted) return;
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                "Leave deleted successfully.",
-                              ),
-                            ),
-                          );
-                      }
-
-                    },
-
-                  ),
-
-                ),
-
-              const SizedBox(height: 30),
-
-              //-----------------------------------
-              // Upcoming Leaves
-              //-----------------------------------
-
-              const Divider(),
-
-              const SizedBox(height: 20),
-
-              const Text(
-                "Upcoming Leaves",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                    }
+                  },
                 ),
               ),
-
-              const SizedBox(height: 12),
-
-              if (provider.upcomingLeaves.isEmpty)
-
-                const Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      children: const [
-
-                        Icon(
-                          Icons.event_available,
-                          size: 48,
-                          color: Colors.grey,
-                        ),
-
-                        SizedBox(height: 12),
-
-                        Text(
-                          "No upcoming leaves",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        SizedBox(height: 6),
-
-                        Text(
-                          "Future leave requests will appear here.",
-                          textAlign: TextAlign.center,
-                        ),
-
-                      ],
-                    ),
-                  ),
-                )
-
-              else
-
-                ...provider.upcomingLeaves.map(
-
-                  (item) => LeaveCard(
-
-                    leave: item.leave,
-
-                    teacher: item.teacher,
-
-                    onDelete: () async {
-                      final confirm =
-                            await showDialog<bool>(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                            title: const Text(
-                              "Delete Leave?",
-                            ),
-                            content: const Text(
-                              "Are you sure you want to delete this leave?",
-                            ),
-                            actions: [
-
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context, false);
-                                },
-                                child: const Text("Cancel"),
-                              ),
-
-                              FilledButton(
-                                onPressed: () {
-                                  Navigator.pop(context, true);
-                                },
-                                child: const Text("Delete"),
-                              ),
-
-                            ],
-                          ),
-                        );
-
-                        if (confirm == true) {
-                          await provider.delete(item.leave);
-
-                          if (!context.mounted) return;
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                "Leave deleted successfully.",
-                              ),
-                            ),
-                          );
-                        }
-
-                    },
-
-                  ),
-
+            const SizedBox(height: 20),
+            const SectionTitle(title: "Upcoming Leaves"),
+            if (provider.upcomingLeaves.isEmpty)
+              Card(
+                elevation: 2,
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
+                child: const Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Icon(Icons.event_available, size: 48, color: Colors.grey),
+                      SizedBox(height: 12),
+                      Text(
+                        "No upcoming leaves",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 6),
+                      Text(
+                        "Future leave requests will appear here.",
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              ...provider.upcomingLeaves.map(
+                (item) => LeaveCard(
+                  leave: item.leave,
+                  teacher: item.teacher,
+                  onDelete: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text("Delete Leave?"),
+                        content: const Text(
+                          "Are you sure you want to delete this leave?",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, false);
+                            },
+                            child: const Text("Cancel"),
+                          ),
+                          FilledButton(
+                            onPressed: () {
+                              Navigator.pop(context, true);
+                            },
+                            child: const Text("Delete"),
+                          ),
+                        ],
+                      ),
+                    );
 
-              const SizedBox(height: 100),
+                    if (confirm == true) {
+                      await provider.delete(item.leave);
 
-            ],
-          ),
+                      if (!context.mounted) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Leave deleted successfully."),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
+            const SizedBox(height: 100),
+          ],
         ),
-
+      ),
     );
   }
 }

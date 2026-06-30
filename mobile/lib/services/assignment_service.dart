@@ -8,15 +8,10 @@ class AssignmentService {
     required int taskId,
     required int teacherId,
   }) async {
-    await _taskRepository.assignTeacher(
-      taskId: taskId,
-      teacherId: teacherId,
-    );
+    await _taskRepository.assignTeacher(taskId: taskId, teacherId: teacherId);
   }
 
-    Future<void> removeAssignment({
-        required int taskId,
-    }) async {
-        await _taskRepository.unassignTask(taskId);
-    }
+  Future<void> removeAssignment({required int taskId}) async {
+    await _taskRepository.unassignTask(taskId);
+  }
 }

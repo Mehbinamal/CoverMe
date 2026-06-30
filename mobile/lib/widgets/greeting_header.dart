@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class GreetingHeader extends StatelessWidget {
   final String teacherName;
 
-  const GreetingHeader({
-    super.key,
-    required this.teacherName,
-  });
+  const GreetingHeader({super.key, required this.teacherName});
 
   String _greeting() {
     final hour = DateTime.now().hour;
@@ -30,33 +27,23 @@ class GreetingHeader extends StatelessWidget {
         children: [
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   _greeting(),
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 6),
                 Text(
                   teacherName,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium
-                      ?.copyWith(
-                        fontWeight:
-                            FontWeight.bold,
-                      ),
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
           ),
-          const CircleAvatar(
-            radius: 28,
-            child: Icon(Icons.person),
-          ),
+          const CircleAvatar(radius: 28, child: Icon(Icons.person)),
         ],
       ),
     );

@@ -9,18 +9,15 @@ import '../models/leave_item.dart';
 import '../repositories/task_repository.dart';
 
 class LeaveProvider extends ChangeNotifier {
-
   List<LeaveItem> todayLeaves = [];
 
   List<LeaveItem> upcomingLeaves = [];
 
   final TaskRepository _taskRepository = TaskRepository();
 
-  final LeaveRepository _leaveRepository =
-      LeaveRepository();
+  final LeaveRepository _leaveRepository = LeaveRepository();
 
-  final TaskGenerationService _taskService =
-      TaskGenerationService();
+  final TaskGenerationService _taskService = TaskGenerationService();
 
   Teacher? selectedTeacher;
 
@@ -45,30 +42,23 @@ class LeaveProvider extends ChangeNotifier {
   }
 
   Future<bool> saveLeave() async {
-
     if (selectedTeacher == null) {
       return false;
     }
 
-
     isSaving = true;
     notifyListeners();
 
-    final date =
-        selectedDate
-            .toIso8601String()
-            .split('T')
-            .first;
+    final date = selectedDate.toIso8601String().split('T').first;
 
     if (await _leaveRepository.alreadyOnLeave(
       teacherId: selectedTeacher!.id!,
       date: date,
     )) {
+      isSaving = false;
+      notifyListeners();
 
-        isSaving = false;
-        notifyListeners();
-
-        return false;
+      return false;
     }
 
     await _leaveRepository.addLeave(
@@ -77,18 +67,13 @@ class LeaveProvider extends ChangeNotifier {
       reason: reason,
     );
 
-    final today = DateTime.now()
-    .toIso8601String()
-    .split('T')
-    .first;
+    final today = DateTime.now().toIso8601String().split('T').first;
 
     if (date == today) {
-    await _taskRepository.deleteTasksForDate(today);
+      await _taskRepository.deleteTasksForDate(today);
 
-    await _taskService.generateTasks(
-      date: today,
-    );
-  }
+      await _taskService.generateTasks(date: today);
+    }
 
     isSaving = false;
 
@@ -98,92 +83,50 @@ class LeaveProvider extends ChangeNotifier {
   }
 
   Future<void> loadLeaves() async {
-
     todayLeaves.clear();
     upcomingLeaves.clear();
 
-    final today = DateTime.now()
-        .toIso8601String()
-        .split('T')
-        .first;
+    final today = DateTime.now().toIso8601String().split('T').first;
 
     //-----------------------
     // Today's Leaves
     //-----------------------
 
-    final todayResults =
-        await _leaveRepository.getLeaves(today);
+    final todayResults = await _leaveRepository.getLeaves(today);
 
     for (final leave in todayResults) {
-
-      final teacher =
-          await TeacherRepository()
-              .getTeacherById(
-                  leave.teacherId);
+      final teacher = await TeacherRepository().getTeacherById(leave.teacherId);
 
       if (teacher != null) {
-
-        todayLeaves.add(
-
-          LeaveItem(
-            leave: leave,
-            teacher: teacher,
-          ),
-
-        );
-
+        todayLeaves.add(LeaveItem(leave: leave, teacher: teacher));
       }
-
     }
 
     //-----------------------
     // Upcoming Leaves
     //-----------------------
 
-    final upcomingResults =
-        await _leaveRepository
-            .getUpcomingLeaves();
+    final upcomingResults = await _leaveRepository.getUpcomingLeaves();
 
     for (final leave in upcomingResults) {
-
-      final teacher =
-          await TeacherRepository()
-              .getTeacherById(
-                  leave.teacherId);
+      final teacher = await TeacherRepository().getTeacherById(leave.teacherId);
 
       if (teacher != null) {
-
-        upcomingLeaves.add(
-
-          LeaveItem(
-            leave: leave,
-            teacher: teacher,
-          ),
-
-        );
-
+        upcomingLeaves.add(LeaveItem(leave: leave, teacher: teacher));
       }
-
     }
 
     notifyListeners();
-
   }
-  
-  Future<void> delete(
-    Leave leave,
-    ) async {
 
+  Future<void> delete(Leave leave) async {
     await _taskRepository.deleteTasksForLeave(
-    teacherId: leave.teacherId,
-    date: leave.date,
+      teacherId: leave.teacherId,
+      date: leave.date,
     );
 
-    await _leaveRepository.deleteLeave(
-    leave.id!,
-    );
+    await _leaveRepository.deleteLeave(leave.id!);
 
     await loadLeaves();
-
-    }
+  }
 }

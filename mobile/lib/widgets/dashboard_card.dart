@@ -18,16 +18,15 @@ class DashboardCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Card(
+        elevation: 2,
+        margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                icon,
-                color: color,
-                size: 30,
-              ),
+              Icon(icon, color: color, size: 30),
               const SizedBox(height: 20),
               Text(
                 value,

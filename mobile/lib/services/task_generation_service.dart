@@ -7,48 +7,32 @@ import '../repositories/task_repository.dart';
 import '../repositories/timetable_repository.dart';
 
 class TaskGenerationService {
+  final LeaveRepository leaveRepository = LeaveRepository();
 
-  final LeaveRepository leaveRepository =
-      LeaveRepository();
+  final TimetableRepository timetableRepository = TimetableRepository();
 
-  final TimetableRepository timetableRepository =
-      TimetableRepository();
+  final TaskRepository taskRepository = TaskRepository();
 
-  final TaskRepository taskRepository =
-      TaskRepository();
-
-  Future<void> generateTasks({
-
-    required String date,
-
-  }) async {
-    
+  Future<void> generateTasks({required String date}) async {
     final day = DateTime.parse(date).weekday;
-    final leaves =
-        await leaveRepository.getLeaves(date);
+    final leaves = await leaveRepository.getLeaves(date);
 
-    for(final leave in leaves){
+    for (final leave in leaves) {
+      final timetable = await timetableRepository.getTeacherDayTimetable(
+        leave.teacherId,
+        day,
+      );
 
-      final timetable =
-          await timetableRepository
-              .getTeacherDayTimetable(
-                    leave.teacherId,
-                    day,
-              );
-
-      for(final period in timetable){
-
+      for (final period in timetable) {
         await taskRepository.createTask(
-
           Task(
-
             teacherId: leave.teacherId,
 
             assignedTeacherId: null,
 
             day: day,
 
-            date:date,
+            date: date,
 
             period: period.period,
 
@@ -57,15 +41,9 @@ class TaskGenerationService {
             subject: period.subject,
 
             status: TaskStatus.pending,
-
           ),
-
         );
-
       }
-
     }
-
   }
-
 }

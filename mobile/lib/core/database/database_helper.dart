@@ -21,28 +21,21 @@ class DatabaseHelper {
   Future<Database> _initDatabase() async {
     final dbPath = await getDatabasesPath();
 
-    final path = join(
-      dbPath,
-      "coverme.db",
-    );
+    final path = join(dbPath, "coverme.db");
 
     return openDatabase(
       path,
       version: 1,
 
       onConfigure: (db) async {
-      await db.execute("PRAGMA foreign_keys = ON;");
+        await db.execute("PRAGMA foreign_keys = ON;");
       },
 
       onCreate: _createDatabase,
     );
   }
 
-  Future<void> _createDatabase(
-    Database db,
-    int version,
-  ) async {
-
+  Future<void> _createDatabase(Database db, int version) async {
     // Teacher
 
     await db.execute("""
@@ -58,7 +51,6 @@ homeroom TEXT
 )
 
 """);
-
 
     // Timetable
 

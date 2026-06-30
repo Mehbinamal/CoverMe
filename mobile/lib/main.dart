@@ -10,22 +10,21 @@ import 'providers/leave_provider.dart';
 import 'providers/task_provider.dart';
 import 'providers/assignment_provider.dart';
 
-Future<void> main () async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseInitializer.initialize();
 
   runApp(
-  MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (_) => DashboardProvider()),
-      ChangeNotifierProvider(create: (_) => TeacherProvider()),
-      ChangeNotifierProvider(create: (_) => TeacherDetailsProvider()),
-      ChangeNotifierProvider(create: (_) => LeaveProvider()),
-      ChangeNotifierProvider(create: (_) => TaskProvider(),),
-      ChangeNotifierProvider(create: (_) => AssignmentProvider(),),
-    ],
-    child: const CoverMeApp(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => TeacherProvider()),
+        ChangeNotifierProvider(create: (_) => TeacherDetailsProvider()),
+        ChangeNotifierProvider(create: (_) => LeaveProvider()),
+        ChangeNotifierProvider(create: (_) => TaskProvider()),
+        ChangeNotifierProvider(create: (_) => AssignmentProvider()),
+      ],
+      child: const CoverMeApp(),
     ),
   );
-  
 }

@@ -7,20 +7,13 @@ class AppTheme {
 
     scaffoldBackgroundColor: AppColors.background,
 
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: AppColors.primary,
-    ),
+    colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
 
-    appBarTheme: const AppBarTheme(
-      elevation: 0,
-      centerTitle: false,
-    ),
+    appBarTheme: const AppBarTheme(elevation: 0, centerTitle: false),
 
     cardTheme: CardThemeData(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     ),
   );
 }

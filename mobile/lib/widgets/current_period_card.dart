@@ -4,19 +4,17 @@ import '../core/utils/period_utils.dart';
 
 class CurrentPeriodCard extends StatelessWidget {
   final int currentPeriod;
-  const CurrentPeriodCard({
-    super.key,
-    required this.currentPeriod,
-  });
+  const CurrentPeriodCard({super.key, required this.currentPeriod});
 
   @override
   Widget build(BuildContext context) {
     final current = PeriodUtils.currentPeriod();
-
     final status = PeriodUtils.schoolStatus();
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: current == null
@@ -25,10 +23,7 @@ class CurrentPeriodCard extends StatelessWidget {
                 children: [
                   const Text(
                     "Current Status",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -45,10 +40,7 @@ class CurrentPeriodCard extends StatelessWidget {
                   CircleAvatar(
                     radius: 28,
                     backgroundColor: Colors.blue.shade100,
-                    child: const Icon(
-                      Icons.schedule,
-                      color: Colors.blue,
-                    ),
+                    child: const Icon(Icons.schedule, color: Colors.blue),
                   ),
                   const SizedBox(width: 18),
                   Expanded(
@@ -87,7 +79,7 @@ class CurrentPeriodCard extends StatelessWidget {
                       "ONGOING",
                       style: TextStyle(color: Colors.green),
                     ),
-                  )
+                  ),
                 ],
               ),
       ),

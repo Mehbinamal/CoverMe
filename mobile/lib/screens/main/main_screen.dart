@@ -10,16 +10,13 @@ class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() =>
-      _MainScreenState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-
   int currentIndex = 0;
 
   final pages = const [
-
     HomeScreen(),
 
     TeacherScreen(),
@@ -29,32 +26,23 @@ class _MainScreenState extends State<MainScreen> {
     TaskScreen(),
 
     SettingsScreen(),
-
   ];
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       body: pages[currentIndex],
 
       bottomNavigationBar: NavigationBar(
-
         selectedIndex: currentIndex,
 
-        onDestinationSelected: (index){
-
+        onDestinationSelected: (index) {
           setState(() {
-
             currentIndex = index;
-
           });
-
         },
 
         destinations: const [
-
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
@@ -84,13 +72,8 @@ class _MainScreenState extends State<MainScreen> {
             selectedIcon: Icon(Icons.settings),
             label: "Settings",
           ),
-
         ],
-
       ),
-
     );
-
   }
-
 }

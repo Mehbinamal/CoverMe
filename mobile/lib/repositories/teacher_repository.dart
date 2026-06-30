@@ -7,10 +7,7 @@ class TeacherRepository {
   Future<int> insertTeacher(Teacher teacher) async {
     final db = await DatabaseHelper.instance.database;
 
-    return db.insert(
-      "teacher",
-      teacher.toMap(),
-    );
+    return db.insert("teacher", teacher.toMap());
   }
 
   Future<Teacher?> getTeacher(String teacherCode) async {
@@ -34,18 +31,13 @@ class TeacherRepository {
       return teacher.id!;
     }
 
-    return insertTeacher(
-      Teacher(name: teacherCode),
-    );
+    return insertTeacher(Teacher(name: teacherCode));
   }
 
   Future<List<Teacher>> getAllTeachers() async {
     final db = await DatabaseHelper.instance.database;
 
-    final result = await db.query(
-      "teacher",
-      orderBy: "name",
-    );
+    final result = await db.query("teacher", orderBy: "name");
 
     return result.map(Teacher.fromMap).toList();
   }
@@ -64,26 +56,16 @@ class TeacherRepository {
   }
 
   Future<Teacher?> getTeacherById(int id) async {
-
     final db = await DatabaseHelper.instance.database;
 
-    final result = await db.query(
-      "teacher",
-      where: "id=?",
-      whereArgs: [id],
-    );
+    final result = await db.query("teacher", where: "id=?", whereArgs: [id]);
 
-    if(result.isEmpty) return null;
+    if (result.isEmpty) return null;
 
     return Teacher.fromMap(result.first);
-
   }
 
   Future<Teacher?> getHM() async {
-
-    return getTeacher(
-        AppConstants.hmCode,
-    );
-
+    return getTeacher(AppConstants.hmCode);
   }
 }

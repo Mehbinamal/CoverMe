@@ -3,18 +3,10 @@ class Teacher {
   final String name;
   final String homeroom;
 
-  const Teacher({
-    this.id,
-    required this.name,
-    this.homeroom = "",
-  });
+  const Teacher({this.id, required this.name, this.homeroom = ""});
 
   Map<String, dynamic> toMap() {
-    return {
-      "id": id,
-      "name": name,
-      "homeroom": homeroom,
-    };
+    return {"id": id, "name": name, "homeroom": homeroom};
   }
 
   factory Teacher.fromMap(Map<String, dynamic> map) {
@@ -25,11 +17,7 @@ class Teacher {
     );
   }
 
-  Teacher copyWith({
-    int? id,
-    String? name,
-    String? homeroom,
-  }) {
+  Teacher copyWith({int? id, String? name, String? homeroom}) {
     return Teacher(
       id: id ?? this.id,
       name: name ?? this.name,

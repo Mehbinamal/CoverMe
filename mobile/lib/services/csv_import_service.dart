@@ -33,8 +33,7 @@ class CsvImportService {
     for (final row in rows) {
       final teacherCode = row[0].toString().trim();
 
-      final day = dayMap[
-          row[1].toString().trim().toUpperCase()]!;
+      final day = dayMap[row[1].toString().trim().toUpperCase()]!;
 
       final period = (row[2] as num).toInt();
 
@@ -42,9 +41,7 @@ class CsvImportService {
 
       final subject = row[4].toString().trim();
 
-      final teacherId =
-          await teacherRepository.getOrCreateTeacher(
-              teacherCode);
+      final teacherId = await teacherRepository.getOrCreateTeacher(teacherCode);
 
       await timetableRepository.insert(
         Timetable(

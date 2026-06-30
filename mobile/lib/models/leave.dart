@@ -12,12 +12,7 @@ class Leave {
   });
 
   Map<String, dynamic> toMap() {
-    return {
-      "id": id,
-      "teacherId": teacherId,
-      "date": date,
-      "reason": reason,
-    };
+    return {"id": id, "teacherId": teacherId, "date": date, "reason": reason};
   }
 
   factory Leave.fromMap(Map<String, dynamic> map) {

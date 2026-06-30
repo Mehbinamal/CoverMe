@@ -27,9 +27,7 @@ class TeacherProvider extends ChangeNotifier {
       filteredTeachers = teachers;
     } else {
       filteredTeachers = teachers.where((teacher) {
-        return teacher.name
-            .toLowerCase()
-            .contains(query.toLowerCase());
+        return teacher.name.toLowerCase().contains(query.toLowerCase());
       }).toList();
     }
 

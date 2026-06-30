@@ -14,8 +14,7 @@ class TimetableRepository {
     );
   }
 
-  Future<List<Timetable>> teacherTimetable(
-      int teacherId) async {
+  Future<List<Timetable>> teacherTimetable(int teacherId) async {
     final db = await DatabaseHelper.instance.database;
 
     final result = await db.query(
@@ -25,9 +24,7 @@ class TimetableRepository {
       orderBy: "day,period",
     );
 
-    return result
-        .map(Timetable.fromMap)
-        .toList();
+    return result.map(Timetable.fromMap).toList();
   }
 
   Future<List<Timetable>> getByDay(int day) async {
@@ -40,15 +37,10 @@ class TimetableRepository {
       orderBy: "period",
     );
 
-    return result
-        .map(Timetable.fromMap)
-        .toList();
+    return result.map(Timetable.fromMap).toList();
   }
 
-  Future<List<Timetable>> getByDayAndPeriod(
-      int day,
-      int period,
-  ) async {
+  Future<List<Timetable>> getByDayAndPeriod(int day, int period) async {
     final db = await DatabaseHelper.instance.database;
 
     final result = await db.query(
@@ -57,9 +49,7 @@ class TimetableRepository {
       whereArgs: [day, period],
     );
 
-    return result
-        .map(Timetable.fromMap)
-        .toList();
+    return result.map(Timetable.fromMap).toList();
   }
 
   Future<Timetable?> getTeacherPeriod(
@@ -72,11 +62,7 @@ class TimetableRepository {
     final result = await db.query(
       "timetable",
       where: "teacherId=? AND day=? AND period=?",
-      whereArgs: [
-        teacherId,
-        day,
-        period,
-      ],
+      whereArgs: [teacherId, day, period],
     );
 
     if (result.isEmpty) return null;
@@ -84,84 +70,53 @@ class TimetableRepository {
     return Timetable.fromMap(result.first);
   }
 
-  Future<bool> teachesClass(
-    int teacherId,
-    String classroom,
-    ) async {
-
+  Future<bool> teachesClass(int teacherId, String classroom) async {
     final db = await DatabaseHelper.instance.database;
 
     final result = await db.query(
-        "timetable",
-        where: "teacherId=? AND classroom=?",
-        whereArgs: [
-        teacherId,
-        classroom,
-        ],
-        limit: 1,
+      "timetable",
+      where: "teacherId=? AND classroom=?",
+      whereArgs: [teacherId, classroom],
+      limit: 1,
     );
 
     return result.isNotEmpty;
+  }
+
+  Future<List<Timetable>> getTeacherDayTimetable(int teacherId, int day) async {
+    final db = await DatabaseHelper.instance.database;
+
+    final result = await db.query(
+      "timetable",
+      where: "teacherId=? AND day=?",
+      whereArgs: [teacherId, day],
+      orderBy: "period",
+    );
+
+    return result.map(Timetable.fromMap).toList();
+  }
+
+  Future<List<Timetable>> getTodayHM(int day) async {
+    final hm = await TeacherRepository().getHM();
+
+    if (hm == null) {
+      return [];
     }
 
-    Future<List<Timetable>> getTeacherDayTimetable(
-        int teacherId,
-        int day,
-        ) async {
+    return teacherTimetable(hm.id!);
+  }
 
-        final db = await DatabaseHelper.instance.database;
+  Future<List<Timetable?>> getCompleteTeacherDay(int teacherId, int day) async {
+    final timetable = await teacherTimetable(teacherId);
 
-        final result = await db.query(
-            "timetable",
-            where: "teacherId=? AND day=?",
-            whereArgs: [
-            teacherId,
-            day,
-            ],
-            orderBy: "period",
-        );
+    final Map<int, Timetable> periodMap = {};
 
-        return result
-            .map(Timetable.fromMap)
-            .toList();
-
+    for (final entry in timetable) {
+      if (entry.day == day) {
+        periodMap[entry.period] = entry;
+      }
     }
 
-    Future<List<Timetable>> getTodayHM(
-            int day,
-        ) async {
-
-            final hm =
-                await TeacherRepository()
-                    .getHM();
-
-            if(hm==null){
-                return [];
-            }
-
-            return teacherTimetable(
-                hm.id!,
-            );
-
-        }
-    Future<List<Timetable?>> getCompleteTeacherDay(
-        int teacherId,
-        int day,
-        ) async {
-        final timetable =
-            await teacherTimetable(teacherId);
-
-        final Map<int, Timetable> periodMap = {};
-
-        for (final entry in timetable) {
-            if (entry.day == day) {
-            periodMap[entry.period] = entry;
-            }
-        }
-
-        return List.generate(
-            7,
-            (index) => periodMap[index + 1],
-        );
-    }
+    return List.generate(7, (index) => periodMap[index + 1]);
+  }
 }

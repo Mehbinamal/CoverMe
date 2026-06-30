@@ -5,8 +5,7 @@ import '../models/timetable.dart';
 import '../repositories/timetable_repository.dart';
 
 class TeacherDetailsProvider extends ChangeNotifier {
-  final TimetableRepository _repository =
-      TimetableRepository();
+  final TimetableRepository _repository = TimetableRepository();
 
   final Map<int, List<Timetable?>> weeklyTimetable = {};
 
@@ -19,8 +18,7 @@ class TeacherDetailsProvider extends ChangeNotifier {
     weeklyTimetable.clear();
 
     for (int day = 1; day <= 6; day++) {
-      weeklyTimetable[day] =
-          await _repository.getCompleteTeacherDay(
+      weeklyTimetable[day] = await _repository.getCompleteTeacherDay(
         teacher.id!,
         day,
       );

@@ -31,8 +31,7 @@ class Timetable {
     };
   }
 
-  factory Timetable.fromMap(
-      Map<String, dynamic> map) {
+  factory Timetable.fromMap(Map<String, dynamic> map) {
     return Timetable(
       id: map["id"],
       teacherId: map["teacherId"],
