@@ -180,4 +180,9 @@ Future<bool> isOnLeave({
 
   }
 
+  Future<void> deleteAllLeaves() async {
+    final db = await DatabaseHelper.instance.database;
+
+    await db.delete("leave_table");
+  }
 }

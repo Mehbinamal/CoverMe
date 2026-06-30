@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'about_screen.dart';
 
+import '../../services/database_reset_service.dart';
+
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -89,16 +91,21 @@ class SettingsScreen extends StatelessWidget {
           FilledButton(
             onPressed: () async {
 
-              Navigator.pop(context);
+            Navigator.pop(context);
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    "Reset functionality will be added next.",
-                  ),
+            await DatabaseResetService().reset();
+
+            if (!context.mounted) return;
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "Database reset successfully.",
                 ),
-              );
-            },
+              ),
+            );
+
+          },
             child: const Text("Reset"),
           ),
         ],
