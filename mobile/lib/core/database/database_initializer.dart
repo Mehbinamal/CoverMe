@@ -2,15 +2,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../services/csv_import_service.dart';
 import 'database_helper.dart';
+import '../../repositories/task_repository.dart';
 
 class DatabaseInitializer {
   static Future<void> initialize() async {
 
-    print("Initializing database...");
-
     await DatabaseHelper.instance.database;
-
-    print("Database initialized.");
 
     final prefs =
         await SharedPreferences.getInstance();
@@ -20,17 +17,15 @@ class DatabaseInitializer {
             false;
 
     if (!initialized) {
-      await CsvImportService().importTimetable();
-
-      print("Timetable imported.");   
+      await CsvImportService().importTimetable(); 
 
       await prefs.setBool(
         "database_initialized",
         true,
       );
 
-  
+    await TaskRepository().deleteOldTasks();
+    await TaskRepository().deleteOldTasks();
     }
-    print("complered");
   }
 }

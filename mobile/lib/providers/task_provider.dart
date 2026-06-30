@@ -18,13 +18,14 @@ class TaskProvider extends ChangeNotifier {
 
   bool isLoading = false;
 
-  Future<void> loadTasks() async {
+    Future<void> loadTasks() async {
 
     isLoading = true;
 
     notifyListeners();
 
     pendingTasks.clear();
+
     assignedTasks.clear();
 
     final today =
@@ -33,40 +34,45 @@ class TaskProvider extends ChangeNotifier {
             .split('T')
             .first;
 
-    //pending
+    //-----------------
+    // Pending
+    //-----------------
+
     final pending =
         await _taskRepository
             .getPendingTasks(
-              date: today,
+                date: today,
             );
 
     for(final task in pending){
 
-      final teacher =
-          await _teacherRepository
-              .getTeacherById(
-                  task.teacherId
-          );
+        final absent =
+            await _teacherRepository
+                .getTeacherById(
+                    task.teacherId);
 
-      if(teacher!=null){
+        if(absent!=null){
 
-        tasks.add(
+        pendingTasks.add(
 
-          TaskItem(
+            TaskItem(
 
             task: task,
 
-            teacher: teacher,
+            absentTeacher: absent,
 
-          ),
+            ),
 
         );
 
-      }
+        }
 
     }
 
-    //assigned
+    //-----------------
+    // Assigned
+    //-----------------
+
     final assigned =
         await _taskRepository
             .getAssignedTasks(
@@ -110,6 +116,6 @@ class TaskProvider extends ChangeNotifier {
 
     notifyListeners();
 
-  }
+    }
 
 }

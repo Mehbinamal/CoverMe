@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../providers/leave_provider.dart';
 import '../../widgets/leave_card.dart';
 import 'add_leave_screen.dart';
+import 'package:intl/intl.dart';
 
 class LeaveScreen extends StatefulWidget {
   const LeaveScreen({super.key});
@@ -19,7 +20,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<LeaveProvider>().loadTodayLeaves();
+      context.read<LeaveProvider>().loadLeaves(date: DateTime.now(),);
     });
   }
 
@@ -31,7 +32,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text("Today's Leaves"),
+        title: const Text("Leaves"),
       ),
 
       floatingActionButton: FloatingActionButton(
@@ -46,40 +47,109 @@ class _LeaveScreenState extends State<LeaveScreen> {
             ),
           );
 
-          provider.loadTodayLeaves();
+          provider.loadLeaves(date: provider.selectedDate,);
 
         },
       ),
 
-      body: provider.todayLeaves.isEmpty
-          ? const Center(
-              child: Text("No leaves today."),
-            )
-          : ListView.builder(
+      body: Column(
+        children: [
 
-              itemCount: provider.todayLeaves.length,
+          Card(
+            margin: const EdgeInsets.all(16),
+            child: ListTile(
+              leading: const Icon(
+                Icons.calendar_month,
+              ),
 
-              itemBuilder: (context, index) {
+              title: Text(
+                DateFormat(
+                  'dd MMM yyyy',
+                ).format(
+                  provider.selectedDate,
+                ),
+              ),
 
-                final item = provider.todayLeaves[index];
+              trailing: const Icon(
+                Icons.arrow_drop_down,
+              ),
 
-                return LeaveCard(
+              onTap: () async {
 
-                  leave: item.leave,
+                final picked =
+                    await showDatePicker(
 
-                  teacher: item.teacher,
+                  context: context,
 
-                  onDelete: () async {
+                  initialDate:
+                      provider.selectedDate,
 
-                    await provider.delete(item.leave);
+                  firstDate:
+                      DateTime.now(),
 
-                  },
+                  lastDate:
+                      DateTime(2035),
 
                 );
+
+                if (picked != null) {
+
+                  provider.loadLeaves(
+                    date: picked,
+                  );
+
+                }
 
               },
 
             ),
+          ),
+
+          Expanded(
+
+            child: provider.leaves.isEmpty
+
+                ? const Center(
+                    child: Text(
+                      "No leaves for this date.",
+                    ),
+                  )
+
+                : ListView.builder(
+
+                    itemCount:
+                        provider.leaves.length,
+
+                    itemBuilder:
+                        (context,index){
+
+                      final item =
+                          provider.leaves[index];
+
+                      return LeaveCard(
+
+                        leave: item.leave,
+
+                        teacher: item.teacher,
+
+                        onDelete: () async {
+
+                          await provider.delete(
+                            item.leave,
+                          );
+
+                        },
+
+                      );
+
+                    },
+
+                  ),
+
+          ),
+
+        ],
+      ),
 
     );
   }

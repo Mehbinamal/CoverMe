@@ -26,19 +26,24 @@ class _AssignBottomSheetState
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
 
-      context.read<AssignmentProvider>().loadTeachers(
+        final provider = context.read<AssignmentProvider>();
 
+        await provider.loadTeachers(
         task: widget.task.task,
-
         date: widget.task.task.date,
+        );
 
-      );
+        // If this task is already assigned, preselect that teacher
+        if (widget.task.assignedTeacher != null) {
+        provider.selectTeacher(
+            widget.task.assignedTeacher!,
+        );
+        }
 
     });
-
-  }
+    }
 
   @override
   Widget build(BuildContext context) {
@@ -59,16 +64,18 @@ class _AssignBottomSheetState
                 children: [
 
                     Text(
-                    "Assign Substitute",
-                    style: Theme.of(context).textTheme.headlineSmall,
-                    ),
+                        widget.task.assignedTeacher == null
+                            ? "Assign Substitute"
+                            : "Reassign Substitute",
+                        style: Theme.of(context).textTheme.headlineSmall,
+                        ),
 
                     const SizedBox(height: 20),
 
                     Text("Class : ${widget.task.task.classroom}"),
                     Text("Subject : ${widget.task.task.subject}"),
                     Text("Period : ${widget.task.task.period}"),
-                    Text("Absent : ${widget.task.teacher.name}"),
+                    Text("Absent : ${widget.task.absentTeacher.name}"),
 
                     const SizedBox(height: 20),
 

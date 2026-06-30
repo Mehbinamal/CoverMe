@@ -10,7 +10,9 @@ import '../repositories/task_repository.dart';
 
 class LeaveProvider extends ChangeNotifier {
 
-  List<LeaveItem> todayLeaves = [];
+  DateTime selectedDate = DateTime.now();
+
+  List<LeaveItem> leaves = [];
 
   final TaskRepository _taskRepository = TaskRepository();
 
@@ -86,20 +88,22 @@ class LeaveProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<void> loadTodayLeaves() async {
+  Future<void> loadLeaves({
+      required DateTime date,
+    }) async {
 
-    todayLeaves.clear();
+    leaves.clear();
+    selectedDate = date;
 
     final today =
-        DateTime.now()
-            .toIso8601String()
+        date.toIso8601String()
             .split('T')
             .first;
 
-    final leaves =
+    final result =
         await _leaveRepository.getLeaves(today);
 
-    for (final leave in leaves) {
+    for (final leave in result) {
 
       final teacher =
           await TeacherRepository()
@@ -108,7 +112,7 @@ class LeaveProvider extends ChangeNotifier {
 
       if (teacher != null) {
 
-        todayLeaves.add(
+        leaves.add(
           LeaveItem(
             leave: leave,
             teacher: teacher,
@@ -136,7 +140,9 @@ class LeaveProvider extends ChangeNotifier {
     leave.id!,
     );
 
-    await loadTodayLeaves();
+    await loadLeaves(
+        date: selectedDate,
+    );
 
     }
 }

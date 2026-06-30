@@ -140,4 +140,33 @@ class TaskRepository {
 
     return result.isNotEmpty;
     }
+
+    Future<void> unassignTask(int taskId) async {
+    final db = await DatabaseHelper.instance.database;
+
+    await db.update(
+        "task",
+        {
+        "assignedTeacherId": null,
+        "status": TaskStatus.pending,
+        },
+        where: "id=?",
+        whereArgs: [taskId],
+    );
+    }
+
+    Future<void> deleteOldTasks() async {
+    final db = await DatabaseHelper.instance.database;
+
+    final today = DateTime.now()
+        .toIso8601String()
+        .split('T')
+        .first;
+
+    await db.delete(
+        "task",
+        where: "date < ?",
+        whereArgs: [today],
+    );
+    }
 }

@@ -137,5 +137,19 @@ Future<bool> isOnLeave({
 
   }
 
-  
+  Future<void> deleteOldLeaves() async {
+    final db = await DatabaseHelper.instance.database;
+
+    final today = DateTime.now()
+        .toIso8601String()
+        .split('T')
+        .first;
+
+    await db.delete(
+      "leave_table",
+      where: "date < ?",
+      whereArgs: [today],
+    );
+  }
+
 }

@@ -13,4 +13,10 @@ class AssignmentService {
       teacherId: teacherId,
     );
   }
+
+    Future<void> removeAssignment({
+        required int taskId,
+    }) async {
+        await _taskRepository.unassignTask(taskId);
+    }
 }

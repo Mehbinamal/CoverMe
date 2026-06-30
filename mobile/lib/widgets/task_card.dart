@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/task_item.dart';
+import '../models/teacher.dart';
 
 class TaskCard extends StatelessWidget {
 
@@ -31,19 +32,16 @@ class TaskCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: ListTile(
         leading: CircleAvatar(
-            child: Text(
-            task.task.period.toString(),
-            ),
+            child: Icon(Icons.assignment),
         ),
         title: Text(task.task.classroom),
         subtitle: Column(
             crossAxisAlignment:
                 CrossAxisAlignment.start,
             children: [
-            Text(task.task.subject),
-            Text(
-                "Absent: ${task.teacher.name}",
-            ),
+                Text("Subject: ${task.task.subject}"),
+                Text("Absent: ${task.absentTeacher.name}"),
+                Text("Period: ${task.task.period}"),
             ],
         ),
         trailing: const Icon(

@@ -83,4 +83,14 @@ class AssignmentProvider extends ChangeNotifier {
 
   }
 
+  Future<void> removeAssignment(
+      int taskId,
+  ) async {
+
+    await _assignment.removeAssignment(
+      taskId: taskId,
+    );
+
+  }
+
 }
