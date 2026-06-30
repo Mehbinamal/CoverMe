@@ -45,174 +45,96 @@ class _AssignBottomSheetState
 
     final provider =
         context.watch<AssignmentProvider>();
-
-    return SafeArea(
-
-      child: Padding(
-
-        padding: const EdgeInsets.all(20),
-
-        child: provider.isLoading
-
-            ? const Center(
-                child:
-                    CircularProgressIndicator(),
-              )
-
-            : Column(
-
-                mainAxisSize:
-                    MainAxisSize.min,
-
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
-
+        return SafeArea(
+        child: DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.75,
+            minChildSize: 0.5,
+            maxChildSize: 0.95,
+            builder: (context, scrollController) {
+            return Padding(
+                padding: const EdgeInsets.all(20),
+                child: ListView(
+                controller: scrollController,
                 children: [
 
-                  Text(
+                    Text(
                     "Assign Substitute",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall,
-                  ),
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    ),
 
-                  const SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
-                  Text(
-                    "Class : ${widget.task.task.classroom}",
-                  ),
+                    Text("Class : ${widget.task.task.classroom}"),
+                    Text("Subject : ${widget.task.task.subject}"),
+                    Text("Period : ${widget.task.task.period}"),
+                    Text("Absent : ${widget.task.teacher.name}"),
 
-                  Text(
-                    "Subject : ${widget.task.task.subject}",
-                  ),
+                    const SizedBox(height: 20),
 
-                  Text(
-                    "Period : ${widget.task.task.period}",
-                  ),
-
-                  Text(
-                    "Absent : ${widget.task.teacher.name}",
-                  ),
-
-                  const SizedBox(height: 25),
-
-                  if (provider.preferred.isNotEmpty)
-
+                    if (provider.preferred.isNotEmpty)
                     const Text(
-                      "Preferred Teachers",
-                      style: TextStyle(
-                        fontWeight:
-                            FontWeight.bold,
-                      ),
+                        "Preferred Teachers",
+                        style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        ),
                     ),
 
-                  ...provider.preferred.map(
-
+                    ...provider.preferred.map(
                     (teacher) => SelectTeacherTile(
-
-                      teacher: teacher,
-
-                      selected:
-                          provider.selectedTeacher?.id ==
-                              teacher.id,
-
-                      onTap: () {
-
-                        provider.selectTeacher(
-                          teacher,
-                        );
-
-                      },
-
+                        teacher: teacher,
+                        selected:
+                            provider.selectedTeacher?.id == teacher.id,
+                        onTap: () => provider.selectTeacher(teacher),
+                    ),
                     ),
 
-                  ),
-
-                  if (provider.others.isNotEmpty)
-
+                    if (provider.others.isNotEmpty)
                     const Padding(
-
-                      padding: EdgeInsets.only(
-                        top: 16,
-                      ),
-
-                      child: Text(
+                        padding: EdgeInsets.only(top: 20),
+                        child: Text(
                         "Other Teachers",
                         style: TextStyle(
-                          fontWeight:
-                              FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                         ),
-                      ),
-
+                        ),
                     ),
 
-                  ...provider.others.map(
-
+                    ...provider.others.map(
                     (teacher) => SelectTeacherTile(
-
-                      teacher: teacher,
-
-                      selected:
-                          provider.selectedTeacher?.id ==
-                              teacher.id,
-
-                      onTap: () {
-
-                        provider.selectTeacher(
-                          teacher,
-                        );
-
-                      },
-
+                        teacher: teacher,
+                        selected:
+                            provider.selectedTeacher?.id == teacher.id,
+                        onTap: () => provider.selectTeacher(teacher),
+                    ),
                     ),
 
-                  ),
+                    const SizedBox(height: 20),
 
-                  const SizedBox(height: 20),
+                    FilledButton(
+                    onPressed: provider.selectedTeacher == null
+                        ? null
+                        : () async {
+                            await provider.assign(widget.task.task.id!);
 
-                  SizedBox(
+                            if (!mounted) return;
 
-                    width: double.infinity,
+                            await context
+                                .read<TaskProvider>()
+                                .loadTasks();
 
-                    child: FilledButton(
-
-                      onPressed:
-                          provider.selectedTeacher == null
-
-                              ? null
-
-                              : () async {
-
-                                  await provider.assign(
-                                    widget.task.task.id!,
-                                  );
-
-                                  if (!mounted) return;
-
-                                  await context
-                                    .read<TaskProvider>()
-                                    .loadTasks();
-
-                                  Navigator.pop(
-                                      context);
-
-                                },
-
-                      child: const Text(
-                        "ASSIGN",
-                      ),
-
+                            Navigator.pop(context);
+                            },
+                    child: const Text("ASSIGN"),
                     ),
 
-                  ),
-
+                    const SizedBox(height: 20),
                 ],
-
-              ),
-
-      ),
-
-    );
+                ),
+            );
+            },
+        ),
+        );
 
   }
 

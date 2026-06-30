@@ -1,15 +1,14 @@
-import '../core/constants/task_status.dart';
 import '../repositories/task_repository.dart';
 
 class AssignmentService {
-  final TaskRepository taskRepository =
-      TaskRepository();
+  final TaskRepository _taskRepository = TaskRepository();
 
+  /// Assign a substitute teacher to a task
   Future<void> assignTeacher({
     required int taskId,
     required int teacherId,
   }) async {
-    await taskRepository.assignTeacher(
+    await _taskRepository.assignTeacher(
       taskId: taskId,
       teacherId: teacherId,
     );

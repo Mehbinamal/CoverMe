@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../home/home_screen.dart';
 import '../teachers/teacher_screen.dart';
 import '../leaves/leave_screen.dart';
-import '../tasks/tasks_screen.dart';
+import '../tasks/task_screen.dart';
 import '../settings/settings_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -26,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
 
     LeaveScreen(),
 
-    TasksScreen(),
+    TaskScreen(),
 
     SettingsScreen(),
 

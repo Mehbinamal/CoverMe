@@ -114,4 +114,25 @@ class TaskRepository {
         ],
     );
     }
+
+    Future<bool> isTeacherAssigned({
+    required int teacherId,
+    required String date,
+    required int period,
+    }) async {
+    final db = await DatabaseHelper.instance.database;
+
+    final result = await db.query(
+        "task",
+        where: "assignedTeacherId=? AND date=? AND period=?",
+        whereArgs: [
+        teacherId,
+        date,
+        period,
+        ],
+        limit: 1,
+    );
+
+    return result.isNotEmpty;
+    }
 }

@@ -48,6 +48,8 @@ class TaskGenerationService {
 
             day: day,
 
+            date:date,
+
             period: period.period,
 
             classroom: period.classroom,

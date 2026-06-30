@@ -7,6 +7,8 @@ class Task {
 
   final int day;
 
+  final String date;
+
   final int period;
 
   final String classroom;
@@ -20,6 +22,7 @@ class Task {
     required this.teacherId,
     this.assignedTeacherId,
     required this.day,
+    required this.date,
     required this.period,
     required this.classroom,
     required this.subject,
@@ -32,6 +35,7 @@ class Task {
       "teacherId": teacherId,
       "assignedTeacherId": assignedTeacherId,
       "day": day,
+      "date": date,
       "period": period,
       "classroom": classroom,
       "subject": subject,
@@ -45,6 +49,7 @@ class Task {
       teacherId: map["teacherId"],
       assignedTeacherId: map["assignedTeacherId"],
       day: map["day"],
+      date: map["date"],
       period: map["period"],
       classroom: map["classroom"],
       subject: map["subject"],
