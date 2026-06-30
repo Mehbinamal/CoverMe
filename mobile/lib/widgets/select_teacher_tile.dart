@@ -25,21 +25,43 @@ class SelectTeacherTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return ListTile(
+    return Card(
 
-      leading: Radio<bool>(
+    color: selected
 
-        value: true,
+        ? Theme.of(context)
+            .colorScheme
+            .primaryContainer
 
-        groupValue: selected,
+        : null,
 
-        onChanged: (_) => onTap(),
+    child: ListTile(
 
-      ),
+        leading: CircleAvatar(
 
-      title: Text(teacher.name),
+        child: Text(
 
-      onTap: onTap,
+            teacher.name.substring(0,1),
+
+        ),
+
+        ),
+
+        title: Text(
+        teacher.name,
+        ),
+
+        trailing: selected
+
+            ? const Icon(
+                Icons.check_circle,
+            )
+
+            : null,
+
+        onTap: onTap,
+
+    ),
 
     );
 
