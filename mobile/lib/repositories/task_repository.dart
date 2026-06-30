@@ -169,4 +169,14 @@ class TaskRepository {
         whereArgs: [today],
     );
     }
+
+    Future<void> deleteTasksForDate(String date) async {
+    final db = await DatabaseHelper.instance.database;
+
+    await db.delete(
+        "task",
+        where: "date = ?",
+        whereArgs: [date],
+    );
+    }
 }

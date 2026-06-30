@@ -152,4 +152,32 @@ Future<bool> isOnLeave({
     );
   }
 
+  Future<List<Leave>> getUpcomingLeaves() async {
+
+    final db =
+        await DatabaseHelper.instance.database;
+
+    final today = DateTime.now()
+        .toIso8601String()
+        .split('T')
+        .first;
+
+    final result = await db.query(
+
+      "leave_table",
+
+      where: "date > ?",
+
+      whereArgs: [today],
+
+      orderBy: "date",
+
+    );
+
+    return result
+        .map(Leave.fromMap)
+        .toList();
+
+  }
+
 }

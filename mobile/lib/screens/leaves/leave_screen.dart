@@ -20,7 +20,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<LeaveProvider>().loadLeaves(date: DateTime.now(),);
+      context.read<LeaveProvider>().loadLeaves();
     });
   }
 
@@ -47,109 +47,124 @@ class _LeaveScreenState extends State<LeaveScreen> {
             ),
           );
 
-          provider.loadLeaves(date: provider.selectedDate,);
+          provider.loadLeaves();
 
         },
       ),
 
-      body: Column(
-        children: [
+        body: RefreshIndicator(
+          onRefresh: () async {
+            await provider.loadLeaves();
+          },
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
 
-          Card(
-            margin: const EdgeInsets.all(16),
-            child: ListTile(
-              leading: const Icon(
-                Icons.calendar_month,
-              ),
+              //-----------------------------------
+              // Today's Leaves
+              //-----------------------------------
 
-              title: Text(
-                DateFormat(
-                  'dd MMM yyyy',
-                ).format(
-                  provider.selectedDate,
+              const Text(
+                "Today's Leaves",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
 
-              trailing: const Icon(
-                Icons.arrow_drop_down,
-              ),
+              const SizedBox(height: 12),
 
-              onTap: () async {
+              if (provider.todayLeaves.isEmpty)
 
-                final picked =
-                    await showDatePicker(
-
-                  context: context,
-
-                  initialDate:
-                      provider.selectedDate,
-
-                  firstDate:
-                      DateTime.now(),
-
-                  lastDate:
-                      DateTime(2035),
-
-                );
-
-                if (picked != null) {
-
-                  provider.loadLeaves(
-                    date: picked,
-                  );
-
-                }
-
-              },
-
-            ),
-          ),
-
-          Expanded(
-
-            child: provider.leaves.isEmpty
-
-                ? const Center(
+                const Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
                     child: Text(
-                      "No leaves for this date.",
+                      "No teachers are on leave today.",
                     ),
-                  )
+                  ),
+                )
 
-                : ListView.builder(
+              else
 
-                    itemCount:
-                        provider.leaves.length,
+                ...provider.todayLeaves.map(
 
-                    itemBuilder:
-                        (context,index){
+                  (item) => LeaveCard(
 
-                      final item =
-                          provider.leaves[index];
+                    leave: item.leave,
 
-                      return LeaveCard(
+                    teacher: item.teacher,
 
-                        leave: item.leave,
+                    onDelete: () async {
 
-                        teacher: item.teacher,
-
-                        onDelete: () async {
-
-                          await provider.delete(
-                            item.leave,
-                          );
-
-                        },
-
+                      await provider.delete(
+                        item.leave,
                       );
 
                     },
 
                   ),
 
-          ),
+                ),
 
-        ],
-      ),
+              const SizedBox(height: 30),
+
+              //-----------------------------------
+              // Upcoming Leaves
+              //-----------------------------------
+
+              const Divider(),
+
+              const SizedBox(height: 20),
+
+              const Text(
+                "Upcoming Leaves",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              if (provider.upcomingLeaves.isEmpty)
+
+                const Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      "No upcoming leaves.",
+                    ),
+                  ),
+                )
+
+              else
+
+                ...provider.upcomingLeaves.map(
+
+                  (item) => LeaveCard(
+
+                    leave: item.leave,
+
+                    teacher: item.teacher,
+
+                    onDelete: () async {
+
+                      await provider.delete(
+                        item.leave,
+                      );
+
+                    },
+
+                  ),
+
+                ),
+
+              const SizedBox(height: 100),
+
+            ],
+          ),
+        ),
 
     );
   }

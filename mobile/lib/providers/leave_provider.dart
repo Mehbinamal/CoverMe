@@ -10,9 +10,9 @@ import '../repositories/task_repository.dart';
 
 class LeaveProvider extends ChangeNotifier {
 
-  DateTime selectedDate = DateTime.now();
+  List<LeaveItem> todayLeaves = [];
 
-  List<LeaveItem> leaves = [];
+  List<LeaveItem> upcomingLeaves = [];
 
   final TaskRepository _taskRepository = TaskRepository();
 
@@ -24,11 +24,11 @@ class LeaveProvider extends ChangeNotifier {
 
   Teacher? selectedTeacher;
 
-  DateTime selectedDate = DateTime.now();
-
   String reason = "";
 
   bool isSaving = false;
+
+  DateTime selectedDate = DateTime.now();
 
   void selectTeacher(Teacher teacher) {
     selectedTeacher = teacher;
@@ -77,9 +77,18 @@ class LeaveProvider extends ChangeNotifier {
       reason: reason,
     );
 
+    final today = DateTime.now()
+    .toIso8601String()
+    .split('T')
+    .first;
+
+    if (date == today) {
+    await _taskRepository.deleteTasksForDate(today);
+
     await _taskService.generateTasks(
-      date: date,
+      date: today,
     );
+  }
 
     isSaving = false;
 
@@ -88,22 +97,24 @@ class LeaveProvider extends ChangeNotifier {
     return true;
   }
 
-  Future<void> loadLeaves({
-      required DateTime date,
-    }) async {
+  Future<void> loadLeaves() async {
 
-    leaves.clear();
-    selectedDate = date;
+    todayLeaves.clear();
+    upcomingLeaves.clear();
 
-    final today =
-        date.toIso8601String()
-            .split('T')
-            .first;
+    final today = DateTime.now()
+        .toIso8601String()
+        .split('T')
+        .first;
 
-    final result =
+    //-----------------------
+    // Today's Leaves
+    //-----------------------
+
+    final todayResults =
         await _leaveRepository.getLeaves(today);
 
-    for (final leave in result) {
+    for (final leave in todayResults) {
 
       final teacher =
           await TeacherRepository()
@@ -112,11 +123,43 @@ class LeaveProvider extends ChangeNotifier {
 
       if (teacher != null) {
 
-        leaves.add(
+        todayLeaves.add(
+
           LeaveItem(
             leave: leave,
             teacher: teacher,
           ),
+
+        );
+
+      }
+
+    }
+
+    //-----------------------
+    // Upcoming Leaves
+    //-----------------------
+
+    final upcomingResults =
+        await _leaveRepository
+            .getUpcomingLeaves();
+
+    for (final leave in upcomingResults) {
+
+      final teacher =
+          await TeacherRepository()
+              .getTeacherById(
+                  leave.teacherId);
+
+      if (teacher != null) {
+
+        upcomingLeaves.add(
+
+          LeaveItem(
+            leave: leave,
+            teacher: teacher,
+          ),
+
         );
 
       }
@@ -140,9 +183,7 @@ class LeaveProvider extends ChangeNotifier {
     leave.id!,
     );
 
-    await loadLeaves(
-        date: selectedDate,
-    );
+    await loadLeaves();
 
     }
 }
