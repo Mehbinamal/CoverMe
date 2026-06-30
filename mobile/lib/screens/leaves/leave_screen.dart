@@ -97,9 +97,39 @@ class _LeaveScreenState extends State<LeaveScreen> {
 
                     onDelete: () async {
 
-                      await provider.delete(
-                        item.leave,
+                    final confirm =
+                          await showDialog<bool>(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: const Text(
+                            "Delete Leave?",
+                          ),
+                          content: const Text(
+                            "Are you sure you want to delete this leave?",
+                          ),
+                          actions: [
+
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                              },
+                              child: const Text("Cancel"),
+                            ),
+
+                            FilledButton(
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                              },
+                              child: const Text("Delete"),
+                            ),
+
+                          ],
+                        ),
                       );
+
+                      if (confirm == true) {
+                        await provider.delete(item.leave);
+                      }
 
                     },
 
@@ -149,10 +179,49 @@ class _LeaveScreenState extends State<LeaveScreen> {
                     teacher: item.teacher,
 
                     onDelete: () async {
+                      final confirm =
+                            await showDialog<bool>(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: const Text(
+                              "Delete Leave?",
+                            ),
+                            content: const Text(
+                              "Are you sure you want to delete this leave?",
+                            ),
+                            actions: [
 
-                      await provider.delete(
-                        item.leave,
-                      );
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context, false);
+                                },
+                                child: const Text("Cancel"),
+                              ),
+
+                              FilledButton(
+                                onPressed: () {
+                                  Navigator.pop(context, true);
+                                },
+                                child: const Text("Delete"),
+                              ),
+
+                            ],
+                          ),
+                        );
+
+                        if (confirm == true) {
+                          await provider.delete(item.leave);
+
+                          if (!context.mounted) return;
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "Leave deleted successfully.",
+                              ),
+                            ),
+                          );
+                        }
 
                     },
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../models/leave.dart';
 import '../models/teacher.dart';
@@ -15,31 +16,77 @@ class LeaveCard extends StatelessWidget {
     required this.onDelete,
   });
 
+  String _formatDate(String date) {
+    final leaveDate = DateTime.parse(date);
+    final today = DateTime.now();
+
+    final todayOnly = DateTime(today.year, today.month, today.day);
+    final leaveOnly =
+        DateTime(leaveDate.year, leaveDate.month, leaveDate.day);
+
+    final difference =
+        leaveOnly.difference(todayOnly).inDays;
+
+    if (difference == 0) {
+      return "Today";
+    }
+
+    if (difference == 1) {
+      return "Tomorrow";
+    }
+
+    if (difference < 7) {
+      return DateFormat('EEEE').format(leaveDate);
+    }
+
+    return DateFormat('dd MMM').format(leaveDate);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 6,
+  return Card(
+    margin: const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 6,
+    ),
+    child: ListTile(
+      leading: const CircleAvatar(
+        child: Icon(Icons.person_off),
       ),
-      child: ListTile(
-        leading: const CircleAvatar(
-          child: Icon(Icons.person_off),
-        ),
-        title: Text(teacher.name),
-        subtitle: Text(
-          leave.reason.isEmpty
-              ? "No reason"
-              : leave.reason,
-        ),
-        trailing: IconButton(
-          icon: const Icon(
-            Icons.delete,
-            color: Colors.red,
-          ),
-          onPressed: onDelete,
-        ),
+      // Wrap the title in a Column to stack the date chip and the name
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // Aligns content to the left
+        mainAxisSize: MainAxisSize.min, // Prevents the column from taking up extra vertical space
+        children: [
+          // Your conditional date chip
+          if (_formatDate(leave.date) != "Today")
+            Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: Chip(
+                avatar: const Icon(
+                  Icons.calendar_today,
+                  size: 16,
+                ),
+                label: Text(
+                  _formatDate(leave.date),
+                ),
+              ),
+            ),
+          // The teacher's name
+          Text(teacher.name),
+        ],
       ),
-    );
+      subtitle: Text(
+        leave.reason.isEmpty ? "No reason" : leave.reason,
+      ),
+      trailing: IconButton(
+        icon: const Icon(
+          Icons.delete,
+          color: Colors.red,
+        ),
+        onPressed: onDelete,
+      ),
+    ),
+  );
   }
 }
