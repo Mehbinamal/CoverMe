@@ -5,23 +5,27 @@ import '../core/constants/task_status.dart';
 
 class TaskRepository {
 
-  Future<List<Task>> pendingTasks() async {
+  Future<List<Task>> getPendingTasks({
+    required String date,
+    }) async {
 
-  final db = await DatabaseHelper.instance.database;
+    final db = await DatabaseHelper.instance.database;
 
-  final result = await db.query(
-      "task",
-      where: "status=?",
-      whereArgs: ["PENDING"],
-      orderBy: "period",
-  );
+    final result = await db.query(
+        "task",
+        where: "status=? AND date=?",
+        whereArgs: [
+        TaskStatus.pending,
+        date,
+        ],
+        orderBy: "period",
+    );
 
-  return result
-      .map((e)=>Task.fromMap(e))
-      .toList();
+    return result
+        .map(Task.fromMap)
+        .toList();
 
-}
-
+    }
   Future<void> assignTeacher({
     required int taskId,
     required int teacherId,

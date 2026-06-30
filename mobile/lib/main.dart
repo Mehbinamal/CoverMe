@@ -7,6 +7,7 @@ import 'providers/teacher_provider.dart';
 import 'core/database/database_initializer.dart';
 import 'providers/teacher_details_provider.dart';
 import 'providers/leave_provider.dart';
+import 'providers/task_provider.dart';
 
 Future<void> main () async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ Future<void> main () async {
       ChangeNotifierProvider(create: (_) => TeacherProvider()),
       ChangeNotifierProvider(create: (_) => TeacherDetailsProvider()),
       ChangeNotifierProvider(create: (_) => LeaveProvider()),
+      ChangeNotifierProvider(create: (_) => TaskProvider(),),
     ],
     child: const CoverMeApp(),
     ),
