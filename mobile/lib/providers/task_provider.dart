@@ -13,7 +13,8 @@ class TaskProvider extends ChangeNotifier {
   final TeacherRepository _teacherRepository =
       TeacherRepository();
 
-  List<TaskItem> tasks = [];
+  List<TaskItem> pendingTasks = [];
+  List<TaskItem> assignedTasks = [];
 
   bool isLoading = false;
 
@@ -23,7 +24,8 @@ class TaskProvider extends ChangeNotifier {
 
     notifyListeners();
 
-    tasks.clear();
+    pendingTasks.clear();
+    assignedTasks.clear();
 
     final today =
         DateTime.now()
@@ -31,6 +33,7 @@ class TaskProvider extends ChangeNotifier {
             .split('T')
             .first;
 
+    //pending
     final pending =
         await _taskRepository
             .getPendingTasks(
@@ -60,6 +63,46 @@ class TaskProvider extends ChangeNotifier {
         );
 
       }
+
+    }
+
+    //assigned
+    final assigned =
+        await _taskRepository
+            .getAssignedTasks(
+                date: today,
+            );
+
+    for(final task in assigned){
+
+        final absent =
+            await _teacherRepository
+                .getTeacherById(
+                    task.teacherId);
+
+        final substitute =
+            await _teacherRepository
+                .getTeacherById(
+                    task.assignedTeacherId!);
+
+        if(absent!=null &&
+        substitute!=null){
+
+        assignedTasks.add(
+
+            TaskItem(
+
+            task: task,
+
+            absentTeacher: absent,
+
+            assignedTeacher: substitute,
+
+            ),
+
+        );
+
+        }
 
     }
 

@@ -44,25 +44,30 @@ class TaskRepository {
   }
 
   Future<List<Task>> getAssignedTasks({
-    required int day,
-    required int period,
+    required String date,
     }) async {
 
     final db = await DatabaseHelper.instance.database;
 
     final result = await db.query(
+
         "task",
-        where: "day=? AND period=? AND status=?",
+
+        where: "status=? AND date=?",
+
         whereArgs: [
-        day,
-        period,
-        "ASSIGNED",
+        TaskStatus.assigned,
+        date,
         ],
+
+        orderBy: "period",
+
     );
 
     return result
-        .map((e) => Task.fromMap(e))
+        .map(Task.fromMap)
         .toList();
+
     }
 
     Future<void> createTask(Task task) async {
