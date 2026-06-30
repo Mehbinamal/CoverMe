@@ -22,53 +22,35 @@ class TaskCard extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Card(
-
-      margin: const EdgeInsets.symmetric(
+    margin: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 8,
-      ),
-
-      child: ListTile(
-
+    ),
+    child: InkWell(
+        onTap: onAssign,
+        borderRadius: BorderRadius.circular(12),
+        child: ListTile(
         leading: CircleAvatar(
-          child: Text(
+            child: Text(
             task.task.period.toString(),
-          ),
-        ),
-
-        title: Text(
-          task.task.classroom,
-        ),
-
-        subtitle: Column(
-
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
-
-          children: [
-
-            Text(task.task.subject),
-
-            Text(
-              "Absent: ${task.teacher.name}",
             ),
-
-          ],
-
         ),
-
-        trailing: FilledButton(
-
-          onPressed: onAssign,
-
-          child: const Text(
-            "Assign",
-          ),
-
+        title: Text(task.task.classroom),
+        subtitle: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+            children: [
+            Text(task.task.subject),
+            Text(
+                "Absent: ${task.teacher.name}",
+            ),
+            ],
         ),
-
-      ),
-
+        trailing: const Icon(
+            Icons.arrow_forward_ios,
+        ),
+        ),
+    ),
     );
 
   }
