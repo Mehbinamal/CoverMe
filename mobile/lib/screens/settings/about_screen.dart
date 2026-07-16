@@ -40,7 +40,7 @@ class AboutScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 24),
-                  const Text("Version 1.0.0"),
+                  const Text("Version 1.5.0"),
                   const SizedBox(height: 8),
                   const Text("Built with Flutter & SQLite"),
                 ],
