@@ -7,6 +7,7 @@ import '../../widgets/dashboard_card.dart';
 import '../../widgets/greeting_header.dart';
 import '../../widgets/section_title.dart';
 import '../../widgets/timetable_card.dart';
+import '../leaves/add_leave_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,7 +49,12 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: _buildAppBar(),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AddLeaveScreen()),
+          );
+        },
         icon: const Icon(Icons.add),
         label: const Text("Leave"),
       ),
@@ -81,6 +87,65 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.orange,
                       ),
                     ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Card(
+                  elevation: 2,
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 0,
+                    vertical: 8,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: const [
+                            Icon(Icons.assignment_turned_in_outlined),
+                            SizedBox(width: 8),
+                            Text(
+                              "Current Period Details",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        if (dashboard.currentPeriodTask == null)
+                          const Text(
+                            "No class task is scheduled for the current period.",
+                          )
+                        else ...[
+                          Text(
+                            "Class: ${dashboard.currentPeriodTask!.task.classroom}",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            "Subject: ${dashboard.currentPeriodTask!.task.subject}",
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            "Teacher on leave: ${dashboard.currentPeriodTask!.absentTeacher.name}",
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            "Assigned teacher: ${dashboard.currentPeriodTask!.assignedTeacher?.name ?? "Pending"}",
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            "Period: ${dashboard.currentPeriodTask!.task.period}",
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),

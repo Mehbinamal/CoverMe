@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../providers/assignment_provider.dart';
 import '../../providers/task_provider.dart';
+import '../../services/task_share_service.dart';
 import '../../widgets/assigned_task_card.dart';
 import '../../widgets/assign_bottom_sheet.dart';
 import '../../widgets/task_card.dart';
@@ -15,6 +16,8 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
+  final TaskShareService _taskShareService = TaskShareService();
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +41,46 @@ class _TaskScreenState extends State<TaskScreen> {
             "Tasks",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
+          actions: [
+            PopupMenuButton<String>(
+              tooltip: 'Share assigned tasks',
+              onSelected: (value) async {
+                await _taskShareService.shareAssignedTasks(
+                  context: context,
+                  tasks: provider.allAssignedTasks.isNotEmpty
+                      ? provider.allAssignedTasks
+                      : provider.assignedTasks,
+                  asPdf: value == 'pdf',
+                );
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'pdf',
+                  child: Row(
+                    children: [
+                      Icon(Icons.picture_as_pdf_outlined),
+                      SizedBox(width: 8),
+                      Text('Share as PDF'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'text',
+                  child: Row(
+                    children: [
+                      Icon(Icons.share_outlined),
+                      SizedBox(width: 8),
+                      Text('Share as text'),
+                    ],
+                  ),
+                ),
+              ],
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Icon(Icons.share_outlined),
+              ),
+            ),
+          ],
           bottom: TabBar(
             tabs: [
               Tab(text: "Pending (${provider.pendingTasks.length})"),
@@ -97,18 +140,27 @@ class _TaskScreenState extends State<TaskScreen> {
                                 );
                               },
                               onDelete: () async {
-                                await context
-                                    .read<AssignmentProvider>()
-                                    .removeAssignment(task.task.id!);
+                                final assignmentProvider = context
+                                    .read<AssignmentProvider>();
+                                await assignmentProvider.removeAssignment(
+                                  task.task.id!,
+                                );
 
-                                await context.read<TaskProvider>().loadTasks();
+                                if (!mounted) return;
+
+                                if (!context.mounted) return;
+
+                                final taskProvider = context
+                                    .read<TaskProvider>();
+                                await taskProvider.loadTasks();
                               },
                             );
                           },
                         ),
-                ],
-              ),
+                  ],
+                ),
       ),
     );
   }
+
 }

@@ -1,6 +1,8 @@
 import '../core/constants/app_constants.dart';
+import '../core/utils/period_utils.dart';
 
 import '../models/dashboard.dart';
+import '../models/task_item.dart';
 
 import 'teacher_repository.dart';
 import 'timetable_repository.dart';
@@ -36,6 +38,35 @@ class DashboardRepository {
 
     final leaves = await leaveRepository.leaveCount(date);
 
+    final currentPeriod = PeriodUtils.currentPeriod();
+
+    TaskItem? currentPeriodTask;
+
+    if (currentPeriod != null) {
+      final tasks = await taskRepository.getTasksForDateAndPeriod(
+        date: date,
+        period: currentPeriod.period,
+      );
+
+      if (tasks.isNotEmpty) {
+        final task = tasks.first;
+        final absentTeacher = await teacherRepository.getTeacherById(
+          task.teacherId,
+        );
+        final assignedTeacher = task.assignedTeacherId != null
+            ? await teacherRepository.getTeacherById(task.assignedTeacherId!)
+            : null;
+
+        if (absentTeacher != null) {
+          currentPeriodTask = TaskItem(
+            task: task,
+            absentTeacher: absentTeacher,
+            assignedTeacher: assignedTeacher,
+          );
+        }
+      }
+    }
+
     return Dashboard(
       hm: hm,
 
@@ -44,6 +75,7 @@ class DashboardRepository {
       pendingTasks: pending,
 
       leaveCount: leaves,
+      currentPeriodTask: currentPeriodTask,
     );
   }
 }

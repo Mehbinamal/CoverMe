@@ -1,7 +1,6 @@
+import 'task_item.dart';
 import 'teacher.dart';
 import 'timetable.dart';
-import 'task.dart';
-import 'leave.dart';
 
 class Dashboard {
   final Teacher hm;
@@ -12,6 +11,8 @@ class Dashboard {
 
   final int leaveCount;
 
+  final TaskItem? currentPeriodTask;
+
   const Dashboard({
     required this.hm,
 
@@ -20,5 +21,6 @@ class Dashboard {
     required this.pendingTasks,
 
     required this.leaveCount,
+    required this.currentPeriodTask,
   });
 }

@@ -17,6 +17,22 @@ class TaskRepository {
     return result.map(Task.fromMap).toList();
   }
 
+  Future<List<Task>> getTasksForDateAndPeriod({
+    required String date,
+    required int period,
+  }) async {
+    final db = await DatabaseHelper.instance.database;
+
+    final result = await db.query(
+      "task",
+      where: "date=? AND period=?",
+      whereArgs: [date, period],
+      orderBy: "period",
+    );
+
+    return result.map(Task.fromMap).toList();
+  }
+
   Future<void> assignTeacher({
     required int taskId,
     required int teacherId,

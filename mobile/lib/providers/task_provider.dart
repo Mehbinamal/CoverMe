@@ -12,6 +12,7 @@ class TaskProvider extends ChangeNotifier {
 
   List<TaskItem> pendingTasks = [];
   List<TaskItem> assignedTasks = [];
+  List<TaskItem> allAssignedTasks = [];
 
   bool isLoading = false;
 
@@ -23,6 +24,7 @@ class TaskProvider extends ChangeNotifier {
     pendingTasks.clear();
 
     assignedTasks.clear();
+    allAssignedTasks.clear();
 
     final today = DateTime.now().toIso8601String().split('T').first;
 
@@ -54,15 +56,14 @@ class TaskProvider extends ChangeNotifier {
       );
 
       if (absent != null && substitute != null) {
-        assignedTasks.add(
-          TaskItem(
-            task: task,
-
-            absentTeacher: absent,
-
-            assignedTeacher: substitute,
-          ),
+        final taskItem = TaskItem(
+          task: task,
+          absentTeacher: absent,
+          assignedTeacher: substitute,
         );
+
+        assignedTasks.add(taskItem);
+        allAssignedTasks.add(taskItem);
       }
     }
 
